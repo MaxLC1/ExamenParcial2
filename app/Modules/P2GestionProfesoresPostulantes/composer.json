@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/p2gestionprofesorespostulantes",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\Modules\\P2GestionProfesoresPostulantes\\": "",
+            "App\\Modules\\P2GestionProfesoresPostulantes\\Database\\Factories\\": "database/factories/",
+            "App\\Modules\\P2GestionProfesoresPostulantes\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Modules\\P2GestionProfesoresPostulantes\\Tests\\": "tests/"
+        }
+    }
+}

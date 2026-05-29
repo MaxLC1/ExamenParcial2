@@ -1,0 +1,11 @@
+{
+    "name": "P3GestionAcademica",
+    "alias": "p3gestionacademica",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "App\\Modules\\P3GestionAcademica\\Providers\\P3GestionAcademicaServiceProvider"
+    ],
+    "files": []
+}

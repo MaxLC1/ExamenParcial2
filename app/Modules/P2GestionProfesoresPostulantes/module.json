@@ -1,0 +1,11 @@
+{
+    "name": "P2GestionProfesoresPostulantes",
+    "alias": "p2gestionprofesorespostulantes",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "App\\Modules\\P2GestionProfesoresPostulantes\\Providers\\P2GestionProfesoresPostulantesServiceProvider"
+    ],
+    "files": []
+}

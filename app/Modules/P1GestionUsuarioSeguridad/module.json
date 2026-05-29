@@ -1,0 +1,11 @@
+{
+    "name": "P1GestionUsuarioSeguridad",
+    "alias": "p1gestionusuarioseguridad",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "App\\Modules\\P1GestionUsuarioSeguridad\\Providers\\P1GestionUsuarioSeguridadServiceProvider"
+    ],
+    "files": []
+}

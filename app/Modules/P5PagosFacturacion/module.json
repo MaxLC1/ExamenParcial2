@@ -1,0 +1,11 @@
+{
+    "name": "P5PagosFacturacion",
+    "alias": "p5pagosfacturacion",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "App\\Modules\\P5PagosFacturacion\\Providers\\P5PagosFacturacionServiceProvider"
+    ],
+    "files": []
+}

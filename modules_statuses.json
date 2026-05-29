@@ -1,0 +1,8 @@
+{
+    "P1GestionUsuarioSeguridad": true,
+    "P2GestionProfesoresPostulantes": true,
+    "P3GestionAcademica": true,
+    "P4GestionEvaluacionAsistencia": true,
+    "P5PagosFacturacion": true,
+    "P6ReportesComunicaciones": true
+}

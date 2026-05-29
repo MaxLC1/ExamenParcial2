@@ -1,0 +1,11 @@
+{
+    "name": "P4GestionEvaluacionAsistencia",
+    "alias": "p4gestionevaluacionasistencia",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "App\\Modules\\P4GestionEvaluacionAsistencia\\Providers\\P4GestionEvaluacionAsistenciaServiceProvider"
+    ],
+    "files": []
+}

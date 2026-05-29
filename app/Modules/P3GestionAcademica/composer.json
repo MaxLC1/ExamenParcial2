@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/p3gestionacademica",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\Modules\\P3GestionAcademica\\": "",
+            "App\\Modules\\P3GestionAcademica\\Database\\Factories\\": "database/factories/",
+            "App\\Modules\\P3GestionAcademica\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Modules\\P3GestionAcademica\\Tests\\": "tests/"
+        }
+    }
+}

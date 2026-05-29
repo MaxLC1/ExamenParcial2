@@ -1,0 +1,11 @@
+{
+    "name": "P6ReportesComunicaciones",
+    "alias": "p6reportescomunicaciones",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "App\\Modules\\P6ReportesComunicaciones\\Providers\\P6ReportesComunicacionesServiceProvider"
+    ],
+    "files": []
+}

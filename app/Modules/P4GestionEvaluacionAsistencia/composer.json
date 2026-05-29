@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/p4gestionevaluacionasistencia",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\Modules\\P4GestionEvaluacionAsistencia\\": "",
+            "App\\Modules\\P4GestionEvaluacionAsistencia\\Database\\Factories\\": "database/factories/",
+            "App\\Modules\\P4GestionEvaluacionAsistencia\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Modules\\P4GestionEvaluacionAsistencia\\Tests\\": "tests/"
+        }
+    }
+}
