@@ -30,9 +30,23 @@ class UsuarioController extends Controller
         }
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $usuarios = User::orderBy('name')->paginate(20);
+        $query = User::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        $usuarios = $query->orderBy('name')->paginate(20);
         return view('usuarios.index', compact('usuarios'));
     }
 

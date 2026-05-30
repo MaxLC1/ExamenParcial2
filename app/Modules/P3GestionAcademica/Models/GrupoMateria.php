@@ -3,6 +3,9 @@
 namespace App\Modules\P3GestionAcademica\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Modules\P2GestionProfesoresPostulantes\Models\Profesor;
+use App\Modules\P4GestionEvaluacionAsistencia\Models\Horario;
+use App\Modules\P4GestionEvaluacionAsistencia\Models\Examen;
 
 class GrupoMateria extends Model
 {

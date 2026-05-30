@@ -23,7 +23,8 @@
                     <li>nombre</li>
                     <li>email</li>
                     <li>rol (admin, profesor, docente, autoridad, coordinador, otros)</li>
-                    <li>password (opcional, si se omite será 'password123')</li>
+                    <li>ci (Opcional en general, pero Requerido si el rol es profesor)</li>
+                    <li>password (opcional, si se omite será 'Password123')</li>
                 </ul>
 
                 <form method="POST" action="{{ route('usuarios.procesar-importacion') }}" enctype="multipart/form-data">

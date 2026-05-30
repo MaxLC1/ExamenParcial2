@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center" style="gap: 12px;">
-                        <img src="https://www.ficct.uagrm.edu.bo:3000/uploads/faculty/Escudo_FICCT.png" alt="Escudo FICCT" style="height: 40px; width: auto;">
+                        <img src="{{ asset('img/escudo.png') }}" alt="Escudo FICCT CUP" style="height: 40px; width: auto;">
                         <div class="flex items-center">
                             <span class="text-2xl font-black tracking-wide" style="color: white;">FICCT</span>
                             <span style="color: rgba(255,255,255,0.4); margin: 0 10px; font-size: 1.5rem; font-weight: 300;">|</span>
@@ -25,17 +25,15 @@
                         <x-nav-link :href="route('gestiones.index')" :active="request()->routeIs('gestiones.*')">Gestiones</x-nav-link>
                         <x-nav-link :href="route('profesores.index')" :active="request()->routeIs('profesores.*')">Profesores</x-nav-link>
                         <x-nav-link :href="route('postulantes.index')" :active="request()->routeIs('postulantes.*')">Postulantes</x-nav-link>
-                        {{-- OCULTOS PARA FASE 2
                         <x-nav-link :href="route('grupos.index')" :active="request()->routeIs('grupos.*')">Grupos</x-nav-link>
+                        {{-- OCULTO PARA FASE 2
                         <x-nav-link :href="route('reportes.index')" :active="request()->routeIs('reportes.*')">Reportes</x-nav-link>
                         --}}
                     @endif
 
                     @if(Auth::user()->isAdmin())
                         <x-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')">Usuarios</x-nav-link>
-                        {{-- OCULTO PARA FASE 2
                         <x-nav-link :href="route('examenes.index')" :active="request()->routeIs('examenes.*')">Exámenes</x-nav-link>
-                        --}}
                         <x-nav-link :href="route('pagos.historial')" :active="request()->routeIs('pagos.*')">Pagos</x-nav-link>
                     @endif
 
@@ -108,23 +106,21 @@
                 <x-responsive-nav-link :href="route('gestiones.index')" :active="request()->routeIs('gestiones.*')">Gestiones</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('profesores.index')" :active="request()->routeIs('profesores.*')">Profesores</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('postulantes.index')" :active="request()->routeIs('postulantes.*')">Postulantes</x-responsive-nav-link>
-                {{-- OCULTOS PARA FASE 2
                 <x-responsive-nav-link :href="route('grupos.index')" :active="request()->routeIs('grupos.*')">Grupos</x-responsive-nav-link>
+                {{-- OCULTO PARA FASE 2
                 <x-responsive-nav-link :href="route('reportes.index')" :active="request()->routeIs('reportes.*')">Reportes</x-responsive-nav-link>
                 --}}
             @endif
 
             @if(Auth::user()->isAdmin())
                 <x-responsive-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')">Usuarios</x-responsive-nav-link>
-                {{-- OCULTO PARA FASE 2
                 <x-responsive-nav-link :href="route('examenes.index')" :active="request()->routeIs('examenes.*')">Exámenes</x-responsive-nav-link>
-                --}}
                 <x-responsive-nav-link :href="route('pagos.historial')" :active="request()->routeIs('pagos.*')">Pagos</x-responsive-nav-link>
             @endif
 
             @if(Auth::user()->role === 'profesor')
                 {{-- OCULTO PARA FASE 2
-                <x-responsive-nav-link :href="route('profesor.asistencias.index')" :active="request()->routeIs('profesor.asistencias.*')">Mis Asistencias</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('profesor.asistencias.index')" :active="request()->routeIs('profesor.asistencias.*')">Mis Asistencias</x-nav-link>
                 --}}
             @endif
 

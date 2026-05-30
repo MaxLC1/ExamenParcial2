@@ -21,6 +21,34 @@
                 <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">{{ session('success') }}</div>
             @endif
 
+            <!-- Filtros de Búsqueda -->
+            <div class="bg-white shadow-sm sm:rounded-lg p-4 mb-4">
+                <form method="GET" class="flex flex-wrap gap-4 items-end">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Buscar (Nombre o Email)</label>
+                        <input type="text" name="search" value="{{ request('search') }}" class="mt-1 rounded-md border-gray-300 shadow-sm text-sm" placeholder="Buscar...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Filtrar por Rol</label>
+                        <select name="role" class="mt-1 rounded-md border-gray-300 shadow-sm text-sm">
+                            <option value="">Todos</option>
+                            <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+                            <option value="profesor" {{ request('role') == 'profesor' ? 'selected' : '' }}>Profesor (Docente)</option>
+                            <option value="postulante" {{ request('role') == 'postulante' ? 'selected' : '' }}>Postulante</option>
+                            <option value="autoridad" {{ request('role') == 'autoridad' ? 'selected' : '' }}>Autoridad</option>
+                            <option value="coordinador" {{ request('role') == 'coordinador' ? 'selected' : '' }}>Coordinador</option>
+                            <option value="otros" {{ request('role') == 'otros' ? 'selected' : '' }}>Otros</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="submit" class="text-white px-4 py-2 rounded-md text-sm font-bold shadow transition" style="background-color: #D52B1E;" onmouseover="this.style.backgroundColor='#b82519'" onmouseout="this.style.backgroundColor='#D52B1E'">Filtrar</button>
+                        @if(request()->has('search') || request()->has('role'))
+                            <a href="{{ route('usuarios.index') }}" class="text-gray-500 hover:text-gray-700 text-sm font-medium ml-2 hover:underline">Limpiar Filtros</a>
+                        @endif
+                    </div>
+                </form>
+            </div>
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="overflow-x-auto">

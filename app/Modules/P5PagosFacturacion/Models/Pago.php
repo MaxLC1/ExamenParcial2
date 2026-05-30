@@ -3,6 +3,8 @@
 namespace App\Modules\P5PagosFacturacion\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Modules\P2GestionProfesoresPostulantes\Models\Postulante;
+use App\Modules\P3GestionAcademica\Models\Gestion;
 
 class Pago extends Model
 {

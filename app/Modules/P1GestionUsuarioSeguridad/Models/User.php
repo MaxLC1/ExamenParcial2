@@ -6,6 +6,8 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Modules\P2GestionProfesoresPostulantes\Models\Profesor;
+use App\Modules\P2GestionProfesoresPostulantes\Models\Postulante;
 
 class User extends Authenticatable
 {

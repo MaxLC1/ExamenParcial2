@@ -236,7 +236,7 @@
 <body>
     <!-- Cabecera Institucional -->
     <div class="header-bar">
-        <img src="https://www.ficct.uagrm.edu.bo:3000/uploads/faculty/Escudo_FICCT.png" alt="Escudo FICCT">
+        <img src="{{ asset('img/escudo.png') }}" alt="Escudo FICCT CUP" style="height: 60px; width: auto;">
         <div class="brand">
             <span class="brand-name">FICCT</span>
             <span class="brand-sep">|</span>

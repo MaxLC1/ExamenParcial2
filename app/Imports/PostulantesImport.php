@@ -75,7 +75,12 @@ class PostulantesImport implements ToCollection, WithHeadingRow
                     }
                 }
 
-                Postulante::create([
+                // Si envían un código de referencia, se asume que ya pagó
+                $referencia = isset($row['referencia_pago']) ? trim($row['referencia_pago']) : '';
+                $estaPagado = !empty($referencia);
+                $estado = $estaPagado ? 'pagado' : 'inscrito';
+
+                $postulante = Postulante::create([
                     'user_id' => $user->id,
                     'gestion_id' => $gestion->id,
                     'ci' => (string) $row['ci'],
@@ -89,11 +94,24 @@ class PostulantesImport implements ToCollection, WithHeadingRow
                     'colegio_procedencia' => $row['colegio_procedencia'] ?? 'No especificado',
                     'ciudad' => $row['ciudad'] ?? 'Santa Cruz',
                     'titulo_bachiller' => true,
-                    'estado' => 'pagado', // Para facilitar el examen, entran como pagados
+                    'estado' => $estado,
                     'primera_opcion_carrera_id' => $id_op1,
                     'segunda_opcion_carrera_id' => $id_op2,
                     'tercera_opcion_carrera_id' => $id_op3,
                 ]);
+
+                if ($estaPagado) {
+                    \App\Modules\P5PagosFacturacion\Models\Pago::create([
+                        'postulante_id' => $postulante->id,
+                        'gestion_id' => $gestion->id,
+                        'monto' => 250.00,
+                        'metodo_pago' => 'cartera_digital',
+                        'referencia_transaccion' => $referencia,
+                        'estado' => 'completado',
+                        'metadata' => ['origen' => 'Importación Masiva (Caja/Banco)'],
+                        'fecha_pago' => now(),
+                    ]);
+                }
             });
         }
     }

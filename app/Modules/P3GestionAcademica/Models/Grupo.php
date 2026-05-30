@@ -3,6 +3,7 @@
 namespace App\Modules\P3GestionAcademica\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Modules\P2GestionProfesoresPostulantes\Models\Postulante;
 
 class Grupo extends Model
 {

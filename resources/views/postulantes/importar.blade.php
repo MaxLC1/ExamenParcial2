@@ -20,6 +20,7 @@
                     <li>opcion_1 (Código o nombre exacto de la carrera)</li>
                     <li>opcion_2 (Código o nombre exacto de la carrera)</li>
                     <li>opcion_3 (Código o nombre exacto de la carrera)</li>
+                    <li>referencia_pago (Opcional. Si ya pagó, escribir el número de comprobante. Ejemplo: <strong>FICCT-BLSIK6YCGD</strong>. El sistema lo marcará como pagado automáticamente).</li>
                 </ul>
 
                 <form method="POST" action="{{ route('postulantes.procesar-importacion') }}" enctype="multipart/form-data">

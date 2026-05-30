@@ -17,7 +17,7 @@
     <body class="font-sans text-gray-900 antialiased" style="background-color: #F3F4F6; min-height: 100vh; display: flex; flex-direction: column; margin: 0;">
         <!-- Cabecera Institucional Superior -->
         <div style="width: 100%; padding: 20px 0; display: flex; align-items: center; justify-content: center; gap: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); background-color: #0A3254;">
-            <img src="https://www.ficct.uagrm.edu.bo:3000/uploads/faculty/Escudo_FICCT.png" alt="Escudo FICCT" style="width: 75px; height: auto; object-fit: contain;">
+            <img src="{{ asset('img/escudo.png') }}" alt="Escudo FICCT CUP" style="width: auto; height: 60px; object-fit: contain;">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <span style="font-size: 36px; font-weight: 900; color: #ffffff; letter-spacing: 1px;">FICCT</span>
                 <span style="color: #6b7280; font-size: 28px; font-weight: 300;">|</span>

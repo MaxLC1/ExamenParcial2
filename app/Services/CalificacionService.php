@@ -10,8 +10,8 @@ use Illuminate\Support\Collection;
 class CalificacionService
 {
     /**
-     * Calcular la nota total de un postulante en una materia (grupo_materia).
-     * Parcial 1 (30) + Parcial 2 (30) + Final (40) = 100
+     * Calcular la nota promedio total de un postulante en una materia.
+     * Se calcula promediando la suma de los 3 exámenes (sobre 100 c/u).
      */
     public function calcularNotaTotal(int $postulanteId, int $grupoMateriaId): float
     {
@@ -38,7 +38,8 @@ class CalificacionService
             }
         }
 
-        // Promedio simple según requerimiento
+        // El profesor califica cada examen sobre 100.
+        // El sistema calcula automáticamente el promedio dividiendo entre 3.
         return round($suma / 3, 2);
     }
 

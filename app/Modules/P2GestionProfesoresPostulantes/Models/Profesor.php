@@ -3,6 +3,8 @@
 namespace App\Modules\P2GestionProfesoresPostulantes\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Modules\P1GestionUsuarioSeguridad\Models\User;
+use App\Modules\P3GestionAcademica\Models\GrupoMateria;
 
 class Profesor extends Model
 {

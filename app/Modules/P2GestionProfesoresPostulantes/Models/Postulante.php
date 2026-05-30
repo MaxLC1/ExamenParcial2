@@ -3,6 +3,13 @@
 namespace App\Modules\P2GestionProfesoresPostulantes\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Modules\P1GestionUsuarioSeguridad\Models\User;
+use App\Modules\P3GestionAcademica\Models\Gestion;
+use App\Modules\P3GestionAcademica\Models\Grupo;
+use App\Modules\P4GestionEvaluacionAsistencia\Models\Calificacion;
+use App\Modules\P5PagosFacturacion\Models\Pago;
+use App\Modules\P3GestionAcademica\Models\AsignacionCarrera;
+use App\Modules\P3GestionAcademica\Models\Carrera;
 
 class Postulante extends Model
 {

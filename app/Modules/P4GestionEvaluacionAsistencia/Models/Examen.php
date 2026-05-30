@@ -3,6 +3,7 @@
 namespace App\Modules\P4GestionEvaluacionAsistencia\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Modules\P3GestionAcademica\Models\GrupoMateria;
 
 class Examen extends Model
 {

@@ -54,6 +54,12 @@
                 <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0070ba] mb-4"></div>
                 <p class="text-gray-600">Procesando transacción segura...</p>
             </div>
+            
+            <div id="paypal-success" class="p-6 hidden text-center">
+                <svg class="w-16 h-16 text-green-500 mx-auto mb-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                <p class="text-green-600 font-bold text-lg">¡Pago Realizado Exitosamente!</p>
+                <p class="text-gray-500 text-sm mt-1">Redirigiendo...</p>
+            </div>
         </div>
     </div>
 
@@ -77,8 +83,14 @@
             
             // Simular el tiempo de conexión a la API de PayPal
             setTimeout(() => {
-                document.getElementById('pago-form').submit();
-            }, 2500);
+                document.getElementById('paypal-loading').classList.add('hidden');
+                document.getElementById('paypal-success').classList.remove('hidden');
+                
+                // Dar tiempo para que el usuario vea la animación de éxito
+                setTimeout(() => {
+                    document.getElementById('pago-form').submit();
+                }, 1500);
+            }, 2000);
         }
     </script>
 </x-app-layout>
