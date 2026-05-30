@@ -16,6 +16,8 @@ class PostulantesImport implements ToCollection, WithHeadingRow
 {
     public function collection(Collection $rows)
     {
+        // Aumentar el tiempo límite a 5 minutos para soportar cientos de registros (por la encriptación de contraseñas)
+        set_time_limit(300);
         $gestion = Gestion::where('estado', 'inscripcion')->latest()->first();
 
         if (!$gestion) {
