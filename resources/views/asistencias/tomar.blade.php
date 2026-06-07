@@ -21,7 +21,7 @@
                                 <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                 Fecha de clase:
                             </label>
-                            <input type="date" name="fecha" value="{{ $fecha }}" class="rounded-lg border-none shadow-inner focus:ring-2 focus:ring-red-500 text-gray-900 font-bold px-4 py-2" required>
+                            <input type="text" id="fecha-asistencia" name="fecha" value="{{ $fecha }}" class="rounded-lg border-none shadow-inner focus:ring-2 focus:ring-red-500 text-gray-900 font-bold px-4 py-2 w-32 cursor-pointer bg-white" required>
                             <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-5 py-2 rounded-lg shadow-md transition-colors border border-red-500">
                                 ↻ Cargar Lista
                             </button>
@@ -65,17 +65,20 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ $postulante->nombre_completo }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-center">
                                             <div class="flex justify-center gap-6">
-                                                <label class="flex items-center cursor-pointer p-2 rounded-lg hover:bg-green-50 transition-colors" style="{{ $estadoActual === 'presente' ? 'background-color: #f0fdf4;' : '' }}">
-                                                    <input type="radio" name="asistencias[{{ $postulante->id }}]" value="presente" style="width: 20px; height: 20px;" class="text-green-600 focus:ring-green-500 border-gray-300" {{ $estadoActual === 'presente' ? 'checked' : '' }}>
-                                                    <span class="ml-2 font-bold" style="{{ $estadoActual === 'presente' ? 'color: #15803d;' : 'color: #4b5563;' }}">Presente</span>
+                                                <label class="flex items-center cursor-pointer p-2 rounded-lg hover:bg-green-50 transition-colors relative">
+                                                    <input type="radio" name="asistencias[{{ $postulante->id }}]" value="presente" class="peer w-5 h-5 text-green-600 focus:ring-green-500 border-gray-300" {{ $estadoActual === 'presente' ? 'checked' : '' }}>
+                                                    <div class="absolute inset-0 rounded-lg peer-checked:bg-green-50 -z-10 transition-colors"></div>
+                                                    <span class="ml-2 font-bold text-gray-600 peer-checked:text-green-700 transition-colors">Presente</span>
                                                 </label>
-                                                <label class="flex items-center cursor-pointer p-2 rounded-lg hover:bg-red-50 transition-colors" style="{{ $estadoActual === 'ausente' ? 'background-color: #fef2f2;' : '' }}">
-                                                    <input type="radio" name="asistencias[{{ $postulante->id }}]" value="ausente" style="width: 20px; height: 20px;" class="text-red-600 focus:ring-red-500 border-gray-300" {{ $estadoActual === 'ausente' ? 'checked' : '' }}>
-                                                    <span class="ml-2 font-bold" style="{{ $estadoActual === 'ausente' ? 'color: #b91c1c;' : 'color: #4b5563;' }}">Ausente</span>
+                                                <label class="flex items-center cursor-pointer p-2 rounded-lg hover:bg-red-50 transition-colors relative">
+                                                    <input type="radio" name="asistencias[{{ $postulante->id }}]" value="ausente" class="peer w-5 h-5 text-red-600 focus:ring-red-500 border-gray-300" {{ $estadoActual === 'ausente' ? 'checked' : '' }}>
+                                                    <div class="absolute inset-0 rounded-lg peer-checked:bg-red-50 -z-10 transition-colors"></div>
+                                                    <span class="ml-2 font-bold text-gray-600 peer-checked:text-red-700 transition-colors">Ausente</span>
                                                 </label>
-                                                <label class="flex items-center cursor-pointer p-2 rounded-lg hover:bg-yellow-50 transition-colors" style="{{ $estadoActual === 'licencia' ? 'background-color: #fefce8;' : '' }}">
-                                                    <input type="radio" name="asistencias[{{ $postulante->id }}]" value="licencia" style="width: 20px; height: 20px;" class="text-yellow-500 focus:ring-yellow-500 border-gray-300" {{ $estadoActual === 'licencia' ? 'checked' : '' }}>
-                                                    <span class="ml-2 font-bold" style="{{ $estadoActual === 'licencia' ? 'color: #a16207;' : 'color: #4b5563;' }}">Licencia</span>
+                                                <label class="flex items-center cursor-pointer p-2 rounded-lg hover:bg-yellow-50 transition-colors relative">
+                                                    <input type="radio" name="asistencias[{{ $postulante->id }}]" value="licencia" class="peer w-5 h-5 text-yellow-500 focus:ring-yellow-500 border-gray-300" {{ $estadoActual === 'licencia' ? 'checked' : '' }}>
+                                                    <div class="absolute inset-0 rounded-lg peer-checked:bg-yellow-50 -z-10 transition-colors"></div>
+                                                    <span class="ml-2 font-bold text-gray-600 peer-checked:text-yellow-700 transition-colors">Licencia</span>
                                                 </label>
                                             </div>
                                         </td>
@@ -109,4 +112,20 @@
             </div>
         </div>
     </div>
+
+    <!-- Integración de Flatpickr para forzar formato de fecha DD/MM/YYYY -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr("#fecha-asistencia", {
+                locale: "es",
+                dateFormat: "Y-m-d", // Formato interno (para backend)
+                altInput: true,
+                altFormat: "d/m/Y",  // Formato visual (para el usuario)
+                disableMobile: "true" // Fuerza a usar este calendario y no el nativo del celular
+            });
+        });
+    </script>
 </x-app-layout>
