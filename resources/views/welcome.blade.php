@@ -20,12 +20,15 @@
     </div>
 
     <!-- NAVBAR -->
-    <nav class="w-full px-4 lg:px-8 py-4 lg:py-5 flex items-center justify-between border-b border-gray-300 border-opacity-50">
+    <nav class="w-full px-4 lg:px-8 py-4 lg:py-5 flex items-center justify-between border-b shadow-md" style="background-color: #0A3254; border-color: #051c2e;">
         <!-- Logo -->
-        <div class="flex items-center gap-1 sm:gap-2">
-            <span class="text-xl sm:text-2xl font-black" style="color: #0A3254;">FICCT</span>
-            <span class="text-gray-400">|</span>
-            <span class="text-xs sm:text-sm font-semibold text-gray-500 tracking-wider">UAGRM</span>
+        <div class="flex items-center" style="gap: 12px;">
+            <img src="{{ asset('img/escudo.png') }}" alt="Escudo FICCT CUP" style="height: 40px; width: auto;">
+            <div class="flex items-center">
+                <span class="text-2xl font-black tracking-wide" style="color: white;">FICCT</span>
+                <span style="color: rgba(255,255,255,0.4); margin: 0 10px; font-size: 1.5rem; font-weight: 300;">|</span>
+                <span class="text-lg font-medium tracking-wide" style="color: #cbd5e1;">UAGRM</span>
+            </div>
         </div>
 
         <!-- Espacio central vacío para mantener la estructura de flex-between -->
@@ -129,8 +132,11 @@
                     </div>
                     <h4 class="text-lg font-bold text-gray-800 mb-2">Soy Nuevo Postulante</h4>
                     <p class="text-sm text-gray-500 mb-6">Regístrate para iniciar tu proceso de admisión a la FICCT.</p>
-                    <a href="{{ route('postulante.registro') }}" class="block w-full py-2.5 text-white font-bold rounded-lg transition-colors" style="background-color: #D52B1E;" onmouseover="this.style.backgroundColor='#b82519'" onmouseout="this.style.backgroundColor='#D52B1E'">
-                        Comenzar Registro
+                    <a href="{{ route('postulante.registro') }}" class="block w-full py-2.5 text-white font-bold rounded-lg transition-colors mb-3 shadow-md" style="background-color: #D52B1E;" onmouseover="this.style.backgroundColor='#b82519'" onmouseout="this.style.backgroundColor='#D52B1E'">
+                        Postulación de Alumnos
+                    </a>
+                    <a href="{{ route('profesor.registro') }}" class="block w-full py-2.5 font-bold rounded-lg transition-colors shadow-sm" style="background-color: white; color: #0A3254; border: 2px solid #0A3254;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='white'">
+                        Postulación de Docentes
                     </a>
                 </div>
 

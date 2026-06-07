@@ -19,6 +19,10 @@ Route::get('/', function () {
 Route::get('/postulante/registro', [PostulanteController::class, 'registro'])->name('postulante.registro');
 Route::post('/postulante/registrar', [PostulanteController::class, 'registrar'])->name('postulante.registrar');
 
+// === Registro público de profesores ===
+Route::get('/profesor/registro', [ProfesorController::class, 'registro'])->name('profesor.registro');
+Route::post('/profesor/registrar', [ProfesorController::class, 'registrar'])->name('profesor.registrar');
+
 // === CU2: Autenticación y Panel de Control (Dashboard) ===
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth'])->name('dashboard');
@@ -55,6 +59,7 @@ Route::middleware('auth')->group(function () {
         Route::get('reportes/por-materia', [ReporteController::class, 'porMateria'])->name('reportes.por-materia');
         Route::get('reportes/por-profesor', [ReporteController::class, 'porProfesor'])->name('reportes.por-profesor');
         Route::get('reportes/por-carrera', [ReporteController::class, 'porCarrera'])->name('reportes.por-carrera');
+        Route::match(['get', 'post'], 'reportes/personalizado', [ReporteController::class, 'personalizado'])->name('reportes.personalizado');
     });
 
     // === SOLO ADMIN (ESCRITURA) ===

@@ -18,6 +18,54 @@ class ProfesorController extends Controller
         return view('profesores.index', compact('profesores'));
     }
 
+    public function registro()
+    {
+        return view('profesores.registro');
+    }
+
+    public function registrar(Request $request)
+    {
+        $validated = $request->validate([
+            'ci' => 'required|string|max:20|unique:profesores,ci',
+            'nombre' => 'required|string|max:255',
+            'apellido' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'titulo_profesional' => 'required|string|max:255',
+            'especialidad' => 'required|string|in:Inglés,Matemáticas,Física,Computación',
+            'telefono' => 'nullable|string|max:20',
+            'password' => 'required|string|min:8|confirmed',
+            'diplomado_educacion_superior' => 'accepted',
+        ], [
+            'diplomado_educacion_superior.accepted' => 'Debe poseer un título de educación (Diplomado en Educación Superior) de forma obligatoria.',
+            'especialidad.required' => 'Debe seleccionar una especialidad.',
+            'especialidad.in' => 'La especialidad seleccionada no es válida.',
+        ]);
+
+        DB::transaction(function () use ($validated, $request) {
+            $user = User::create([
+                'name' => $validated['nombre'] . ' ' . $validated['apellido'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'role' => 'profesor',
+            ]);
+
+            Profesor::create([
+                'user_id' => $user->id,
+                'ci' => $validated['ci'],
+                'nombre' => $validated['nombre'],
+                'apellido' => $validated['apellido'],
+                'titulo_profesional' => $validated['titulo_profesional'],
+                'maestria' => $request->has('maestria'),
+                'diplomado_educacion_superior' => $request->has('diplomado_educacion_superior'),
+                'especialidad' => $validated['especialidad'] ?? null,
+                'telefono' => $validated['telefono'] ?? null,
+                'activo' => false, // Opcional: Requiere aprobación? lo dejaremos por default.
+            ]);
+        });
+
+        return redirect()->route('login')->with('success', 'Registro de docente exitoso. Ahora puede iniciar sesión en el sistema académico.');
+    }
+
     public function create()
     {
         $materias = \App\Modules\P3GestionAcademica\Models\Materia::all();

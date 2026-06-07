@@ -1,59 +1,144 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Uagrm-logo.png/600px-Uagrm-logo.png" width="150" alt="UAGRM Logo">
 </p>
 
-## About Laravel
+# FICCT — Sistema de Admisión Universitaria (CUP)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+> Sistema web profesional para la gestión integral del proceso de ingreso al curso preuniversitario de la FICCT
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🚀 Inicio Rápido
 
-## Learning Laravel
+```bash
+# 1. Instalar dependencias PHP
+composer install
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+# 2. Instalar dependencias JS
+npm install
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# 3. Configurar entorno
+cp .env.example .env
+php artisan key:generate
 
-## Laravel Sponsors
+# 4. Base de datos
+php artisan migrate:fresh --seed
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# 5. Generar cuentas de prueba por defecto
+php artisan db:seed --class=RolesProfesoresSeeder
 
-### Premium Partners
+# 6. Compilar assets
+npm run build          # Producción
+# o
+npm run dev            # Desarrollo (hot reload)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# 7. Iniciar servidor
+php artisan serve
+```
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 📋 Credenciales de Prueba
 
-## Code of Conduct
+| Correo | Rol | Contraseña |
+|---|---|---|
+| `admin@ficct.edu.bo` | Administrador | `admin123` |
+| `coordinador@ficct.edu.bo` | Coordinador (Admin) | `Password123` |
+| `computacion@ficct.edu.bo` | Profesor (Computación) | `Password123` |
+| `matematicas@ficct.edu.bo` | Profesor (Matemáticas) | `Password123` |
+| `fisica@ficct.edu.bo` | Profesor (Física) | `Password123` |
+| `ingles@ficct.edu.bo` | Profesor (Inglés) | `Password123` |
+| `estudiante1@ficct.edu.bo` | Postulante (Alumno) | `Password123` |
+| `estudiante2@ficct.edu.bo` | Postulante (Alumno) | `Password123` |
+| `estudiante3@ficct.edu.bo` | Postulante (Alumno) | `Password123` |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 🏗 Arquitectura del Proyecto
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Este sistema usa una **arquitectura de monolito modular** con Laravel. Los módulos se encuentran organizados dentro de `app/Modules/` y cada uno maneja sus propios Modelos, Controladores y Rutas, garantizando un código limpio y escalable.
 
-## License
+### Estructura de Carpetas
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```text
+ficct-cup/                            ← Raíz del proyecto Laravel
+├── app/                              ← 🔧 BACKEND (Lógica del servidor)
+│   ├── Http/                         
+│   │   ├── Controllers/              │  Controladores globales (Auth/Profile)
+│   │   └── Middleware/               │  RoleMiddleware (Seguridad de Roles)
+│   ├── Models/                       │  Modelos globales (User)
+│   ├── Modules/                      │  ⭐ MÓDULOS DEL NEGOCIO (Domain-Driven)
+│   │   ├── P1GestionUsuarioSeguridad/
+│   │   │   └── (Gestión de usuarios, roles y accesos)
+│   │   ├── P2GestionProfesoresPostulantes/
+│   │   │   ├── Controllers/          │  ProfesorController, PostulanteController
+│   │   │   └── Models/               │  Profesor, Postulante
+│   │   ├── P3GestionAcademica/
+│   │   │   ├── Controllers/          │  CarreraController, MateriaController, GrupoController
+│   │   │   └── Models/               │  Carrera, Materia, Grupo, Gestion, Horario
+│   │   ├── P4GestionEvaluacionAsistencia/
+│   │   │   ├── Controllers/          │  ExamenController
+│   │   │   └── Models/               │  Examen, Calificacion, Asistencia
+│   │   ├── P5PagosFacturacion/
+│   │   │   └── (Lógica de pagos y pasarelas)
+│   │   └── P6ReportesComunicaciones/
+│   │       ├── Controllers/          │  ReporteController
+│   │       └── Views/                │  Vistas y lógicas de exportación PDF
+│   └── Services/                     │  ⭐ SERVICIOS DE NEGOCIO REUTILIZABLES
+│       ├── CalificacionService.php   │  Cálculos automáticos de aprobación (>=60)
+│       ├── GrupoService.php          │  Distribución automática de alumnos
+│       └── PostulanteService.php     │  Lógica de asignación de carreras
+│
+├── database/                         ← 🗃 BASE DE DATOS
+│   ├── migrations/                   │  Esquemas relacionales
+│   └── seeders/
+│       ├── DatabaseSeeder.php        │  Seeder orquestador
+│       ├── AdminSeeder.php           │  Usuario administrador inicial
+│       ├── CarreraSeeder.php         │  Carreras predeterminadas (Ing. Sistemas, etc.)
+│       └── RolesProfesoresSeeder.php │  ⭐ Profesores de prueba y Coordinador
+│
+├── resources/                        ← 🎨 FRONTEND (Vistas y assets)
+│   ├── views/
+│   │   ├── auth/                     │  Login, Register (Laravel Breeze)
+│   │   ├── layouts/
+│   │   │   ├── app.blade.php         │  Layout principal estructurado
+│   │   │   └── navigation.blade.php  │  Barra de navegación responsiva
+│   │   ├── dashboard.blade.php       │  Panel principal con indicadores y KPIs
+│   │   ├── grupos/                   │  Vistas de grupos y asignación de materias
+│   │   ├── postulantes/              │  CRUD y vistas de importación CSV/Excel
+│   │   └── reportes/                 │  Interfaces premium y plantillas PDF (DOMPDF)
+│   └── css/                          │  Configuraciones TailwindCSS globales
+│
+├── public/                           ← 📁 Archivos públicos
+├── routes/                           
+│   └── web.php                       │  Rutas principales web protegidas
+├── .env                              ← Variables de entorno (Conexión PostgreSQL)
+├── composer.json                     ← Dependencias PHP
+├── tailwind.config.js                ← Tokens de diseño (Colores institucionales)
+└── vite.config.js                    ← Bundler para Tailwind y Alpine
+```
+
+---
+
+## 🔐 Seguridad y Lógica de Negocio
+
+- **Validación Estricta:** Implementación rigurosa de Request Validation tanto en el frontend (HTML5/JS) como en el backend (Laravel validation).
+- **Protección de Rutas:** Uso de Middleware personalizado `RoleMiddleware` para separar permisos entre `admin` y `profesor`.
+- **Cálculos Automáticos:** El sistema evalúa silenciosamente los promedios matemáticos y asigna automáticamente el estado (`Aprobado`/`Reprobado` en base a 60 puntos).
+- **Distribución de Cargas:** El sistema divide dinámicamente los grupos según un límite establecido (Ej. máximo 70 alumnos) mediante cálculos con `ceil()`.
+- **Importación Masiva:** Seguridad en el procesamiento de archivos Excel/CSV para creación automatizada de cuentas.
+
+---
+
+## 📦 Tecnologías y Librerías
+
+| Tecnología / Paquete | Uso Principal |
+|---|---|
+| **PHP ^8.2** | Lenguaje central del servidor |
+| **Laravel ^11.9** | Framework robusto para backend |
+| **PostgreSQL** | Motor de base de datos relacional |
+| **Laravel Breeze** | Sistema de autenticación base |
+| **TailwindCSS** | Framework utilitario para diseño UI "Premium" |
+| **Alpine.js** | Interactividad ligera en el frontend |
+| **barryvdh/laravel-dompdf** | Generación y exportación de reportes PDF |
+| **Maatwebsite/Excel** | Procesamiento e importación de lotes CSV/Excel |

@@ -27,41 +27,57 @@ class GrupoService
         }
 
         $totalInscritos = $postulantes->count();
-        // Fórmula requerida: CEIL(TotalInscritos / 70)
-        $numGrupos = (int) ceil($totalInscritos / $capacidadPorGrupo);
-
-        // Crear grupos si no existen suficientes
-        $gruposExistentes = Grupo::where('gestion_id', $gestion->id)->count();
-        $gruposACrear = max(0, $numGrupos - $gruposExistentes);
-
-        for ($i = 0; $i < $gruposACrear; $i++) {
-            Grupo::create([
-                'gestion_id' => $gestion->id,
-                'nombre' => 'Grupo ' . chr(65 + $gruposExistentes + $i) . ($gruposExistentes + $i >= 26 ? ($gruposExistentes + $i - 25) : ''),
-                'capacidad_maxima' => $capacidadPorGrupo,
-                'aula' => 'Aula ' . ($gruposExistentes + $i + 1),
-            ]);
-        }
-
+        
+        // Obtener grupos existentes con su cantidad actual de postulantes
         $grupos = Grupo::where('gestion_id', $gestion->id)
+            ->withCount('postulantes')
             ->orderBy('id')
             ->get();
+            
+        $gruposExistentes = $grupos->count();
 
-        // Distribución round-robin
-        $index = 0;
         foreach ($postulantes as $postulante) {
-            $grupo = $grupos[$index % $grupos->count()];
+            // Buscar el primer grupo que tenga espacio disponible
+            $grupoDisponible = $grupos->first(function ($g) use ($capacidadPorGrupo) {
+                return $g->postulantes_count < $capacidadPorGrupo;
+            });
+
+            // Si no hay grupos con espacio, creamos uno nuevo
+            if (!$grupoDisponible) {
+                // Determinar el nombre de la letra (A, B, C... Z, A1, B1...)
+                $letraIndex = $gruposExistentes % 26;
+                $ciclo = floor($gruposExistentes / 26);
+                $sufijo = $ciclo > 0 ? $ciclo : '';
+                $nuevoNombre = 'Grupo ' . chr(65 + $letraIndex) . $sufijo;
+
+                $grupoDisponible = Grupo::create([
+                    'gestion_id' => $gestion->id,
+                    'nombre' => $nuevoNombre,
+                    'capacidad_maxima' => $capacidadPorGrupo,
+                    'aula' => 'Aula ' . ($gruposExistentes + 1),
+                ]);
+                
+                // Inicializar el contador manualmente para la colección actual
+                $grupoDisponible->postulantes_count = 0;
+                
+                $grupos->push($grupoDisponible);
+                $gruposExistentes++;
+            }
+
+            // Asignar al grupo
             $postulante->update([
-                'grupo_id' => $grupo->id,
+                'grupo_id' => $grupoDisponible->id,
                 'estado' => 'en_curso',
             ]);
-            $index++;
+
+            // Incrementar el contador del grupo en memoria
+            $grupoDisponible->postulantes_count++;
         }
 
         return [
             'total_postulantes' => $totalInscritos,
-            'total_grupos' => $grupos->count(),
-            'postulantes_por_grupo' => (int) ceil($totalInscritos / $grupos->count()),
+            'total_grupos' => $gruposExistentes,
+            'postulantes_por_grupo' => "Distribución completada (Max: $capacidadPorGrupo por grupo)",
         ];
     }
 }

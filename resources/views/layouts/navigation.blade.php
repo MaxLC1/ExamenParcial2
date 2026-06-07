@@ -1,6 +1,6 @@
 <nav x-data="{ open: false }" class="shadow-md border-b" style="background-color: #0A3254; border-color: #051c2e;">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="w-full px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
@@ -26,9 +26,7 @@
                         <x-nav-link :href="route('profesores.index')" :active="request()->routeIs('profesores.*')">Profesores</x-nav-link>
                         <x-nav-link :href="route('postulantes.index')" :active="request()->routeIs('postulantes.*')">Postulantes</x-nav-link>
                         <x-nav-link :href="route('grupos.index')" :active="request()->routeIs('grupos.*')">Grupos</x-nav-link>
-                        {{-- OCULTO PARA FASE 2
                         <x-nav-link :href="route('reportes.index')" :active="request()->routeIs('reportes.*')">Reportes</x-nav-link>
-                        --}}
                     @endif
 
                     @if(Auth::user()->isAdmin())
@@ -38,9 +36,7 @@
                     @endif
 
                     @if(Auth::user()->role === 'profesor')
-                        {{-- OCULTO PARA FASE 2
                         <x-nav-link :href="route('profesor.asistencias.index')" :active="request()->routeIs('profesor.asistencias.*')">Mis Asistencias</x-nav-link>
-                        --}}
                     @endif
 
                     @if(Auth::user()->isPostulante())
@@ -107,9 +103,7 @@
                 <x-responsive-nav-link :href="route('profesores.index')" :active="request()->routeIs('profesores.*')">Profesores</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('postulantes.index')" :active="request()->routeIs('postulantes.*')">Postulantes</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('grupos.index')" :active="request()->routeIs('grupos.*')">Grupos</x-responsive-nav-link>
-                {{-- OCULTO PARA FASE 2
                 <x-responsive-nav-link :href="route('reportes.index')" :active="request()->routeIs('reportes.*')">Reportes</x-responsive-nav-link>
-                --}}
             @endif
 
             @if(Auth::user()->isAdmin())
@@ -119,9 +113,7 @@
             @endif
 
             @if(Auth::user()->role === 'profesor')
-                {{-- OCULTO PARA FASE 2
-                <x-responsive-nav-link :href="route('profesor.asistencias.index')" :active="request()->routeIs('profesor.asistencias.*')">Mis Asistencias</x-nav-link>
-                --}}
+                <x-responsive-nav-link :href="route('profesor.asistencias.index')" :active="request()->routeIs('profesor.asistencias.*')">Mis Asistencias</x-responsive-nav-link>
             @endif
 
             @if(Auth::user()->isPostulante())

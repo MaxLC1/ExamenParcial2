@@ -165,4 +165,69 @@ class ReporteController extends Controller
 
         return view('reportes.por-carrera', compact('reporteData', 'gestion', 'gestionId'));
     }
+
+    public function personalizado(Request $request)
+    {
+        $gestionId = $request->get('gestion_id', Gestion::latest()->first()?->id);
+        $gestiones = Gestion::orderByDesc('created_at')->get();
+        $materias = Materia::all();
+        $profesores = Profesor::all();
+        $carreras = Carrera::all();
+
+        $columnasSeleccionadas = $request->get('columnas', ['ci', 'nombre', 'nota', 'estado', 'carrera_asignada']);
+        $filtroMateria = $request->get('materia_id');
+        $filtroEstado = $request->get('estado'); // 'aprobado', 'reprobado', 'todos'
+
+        $reporteData = [];
+
+        if ($request->isMethod('post') || $request->get('formato') === 'pdf') {
+            $query = Postulante::whereHas('grupo', fn($q) => $q->where('gestion_id', $gestionId));
+            $postulantes = $query->get();
+            $calService = app(CalificacionService::class);
+
+            foreach ($postulantes as $p) {
+                if ($filtroMateria) {
+                    $gm = $p->grupo->grupoMaterias()->where('materia_id', $filtroMateria)->first();
+                    if (!$gm) continue;
+                    $nota = $calService->calcularNotaTotal($p->id, $gm->id);
+                } else {
+                    $nota = 0;
+                    $totalM = 0;
+                    foreach ($p->grupo->grupoMaterias as $gm) {
+                        $nota += $calService->calcularNotaTotal($p->id, $gm->id);
+                        $totalM++;
+                    }
+                    if ($totalM > 0) $nota = $nota / $totalM; // Average
+                }
+
+                $estado = $nota >= 60 ? 'Aprobado' : 'Reprobado';
+
+                if ($filtroEstado && $filtroEstado !== 'todos') {
+                    if (strtolower($estado) !== strtolower($filtroEstado)) continue;
+                }
+
+                $asignacion = \App\Modules\P3GestionAcademica\Models\AsignacionCarrera::where('postulante_id', $p->id)
+                    ->where('estado', 'asignado')
+                    ->first();
+
+                $reporteData[] = [
+                    'ci' => $p->ci,
+                    'nombre' => $p->nombre_completo,
+                    'telefono' => $p->telefono ?? '-',
+                    'email' => $p->email ?? '-',
+                    'nota' => round($nota, 2),
+                    'estado' => $estado,
+                    'carrera_asignada' => $asignacion ? $asignacion->carrera->nombre : 'Sin Asignar',
+                ];
+            }
+        }
+
+        $formato = $request->get('formato', 'html');
+        if ($formato === 'pdf') {
+            $pdf = Pdf::loadView('reportes.pdf.personalizado', compact('reporteData', 'columnasSeleccionadas'));
+            return $pdf->download("reporte_personalizado.pdf");
+        }
+
+        return view('reportes.personalizado', compact('reporteData', 'columnasSeleccionadas', 'gestiones', 'gestionId', 'materias', 'carreras', 'filtroMateria', 'filtroEstado'));
+    }
 }
