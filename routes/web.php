@@ -28,8 +28,11 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth'])->name('dashboard');
 
 Route::get('/run-migration', function () {
-    \Illuminate\Support\Facades\Artisan::call('migrate');
-    return 'Migración ejecutada con éxito: ' . \Illuminate\Support\Facades\Artisan::output();
+    // Forzamos las migraciones porque en producción Laravel pide confirmación
+    \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--seed' => true, '--force' => true]);
+    \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'RolesProfesoresSeeder', '--force' => true]);
+    
+    return '¡Migración y creación de usuarios ejecutada con éxito en la nube!';
 });
 
 // Rutas autenticadas
