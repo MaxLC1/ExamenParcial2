@@ -42,12 +42,18 @@
 
             <form method="POST" action="{{ route('profesor.guardar-calificaciones', $examen) }}">
                 @csrf
-                <div class="bg-white shadow-md sm:rounded-xl mb-6 border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200" style="background-color: #f8fafc;">
+                <div class="bg-white shadow-md sm:rounded-xl mb-6 border border-gray-100 overflow-hidden" x-data="{ search: '' }">
+                    <div class="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4" style="background-color: #f8fafc;">
                         <h4 class="font-extrabold text-lg flex items-center gap-2" style="color: #0A3254;">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
                             Lista de Postulantes
                         </h4>
+                        <div class="relative w-full sm:w-72">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/></svg>
+                            </div>
+                            <input type="text" x-model="search" class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white shadow-sm focus:ring-[#0A3254] focus:border-[#0A3254]" placeholder="Buscar por CI o Nombre...">
+                        </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
@@ -60,7 +66,8 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach($postulantes as $index => $p)
-                                    <tr class="hover:bg-blue-50 transition-colors {{ $index % 2 === 0 ? 'bg-white' : 'bg-gray-50' }}">
+                                    <tr class="hover:bg-blue-50 transition-colors {{ $index % 2 === 0 ? 'bg-white' : 'bg-gray-50' }}"
+                                        x-show="search === '' || '{{ strtolower($p->ci) }}'.includes(search.toLowerCase()) || '{{ strtolower($p->nombre_completo) }}'.includes(search.toLowerCase())">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $p->ci }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ $p->nombre_completo }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-center">
