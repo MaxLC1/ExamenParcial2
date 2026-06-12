@@ -155,13 +155,20 @@
                                             </thead>
                                             <tbody class="bg-white divide-y divide-gray-50">
                                                 @foreach($examenesDeMateria as $ex)
+                                                @php
+                                                    $tipoDisplay = '';
+                                                    if($ex->tipo === 'examen_1') $tipoDisplay = 'Primer Parcial';
+                                                    elseif($ex->tipo === 'examen_2') $tipoDisplay = 'Segundo Parcial';
+                                                    elseif($ex->tipo === 'examen_3') $tipoDisplay = 'Examen Final';
+                                                    else $tipoDisplay = ucfirst(str_replace('_',' ',$ex->tipo));
+                                                @endphp
                                                 <tr class="hover:bg-blue-50 transition-colors duration-150"
-                                                    x-data="{ tipo: '{{ strtolower(str_replace('_',' ',$ex->tipo)) }}' }"
+                                                    x-data="{ tipo: '{{ strtolower($tipoDisplay) }}' }"
                                                     x-show="search === '' || textMateria.includes(search.toLowerCase()) || '{{ strtolower($groupName) }}'.includes(search.toLowerCase()) || tipo.includes(search.toLowerCase())">
                                                     <td class="px-5 py-3 whitespace-nowrap">
                                                         <div class="text-sm font-bold text-gray-900 flex items-center gap-2">
                                                             <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                                                            {{ ucfirst(str_replace('_',' ',$ex->tipo)) }}
+                                                            {{ $tipoDisplay }}
                                                         </div>
                                                     </td>
                                                     <td class="px-5 py-3 whitespace-nowrap text-sm text-center">

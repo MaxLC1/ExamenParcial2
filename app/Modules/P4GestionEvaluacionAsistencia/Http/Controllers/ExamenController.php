@@ -19,7 +19,7 @@ class ExamenController extends Controller
         $examenes = Examen::with(['grupoMateria.grupo', 'grupoMateria.materia', 'grupoMateria.profesor'])
             ->whereHas('grupoMateria.grupo', fn($q) => $q->where('gestion_id', $gestionId))
             ->orderBy('fecha')
-            ->paginate(20);
+            ->get();
         $gestiones = Gestion::orderByDesc('created_at')->get();
 
         return view('examenes.index', compact('examenes', 'gestiones', 'gestionId'));
