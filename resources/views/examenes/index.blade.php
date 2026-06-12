@@ -66,95 +66,137 @@
             </div>
 
             @php
-                $groupedExamenes = $examenes->groupBy(function($item) {
-                    return $item->grupoMateria->grupo->nombre . ' - ' . $item->grupoMateria->materia->nombre;
+                // Nivel 1: Agrupar por Grupo
+                $groupedByGrupo = $examenes->groupBy(function($item) {
+                    return 'Grupo ' . $item->grupoMateria->grupo->nombre;
                 });
             @endphp
 
             <!-- Lista de Grupos -->
             <div class="space-y-8">
-                @forelse($groupedExamenes as $groupName => $groupExamenes)
+                @forelse($groupedByGrupo as $groupName => $examenesDelGrupo)
                     @php
-                        // Recolectar textos buscables de este grupo para el filtrado con Alpine.js
-                        $searchableText = strtolower($groupName);
-                        foreach($groupExamenes as $ex) {
-                            $searchableText .= ' ' . strtolower(str_replace('_',' ',$ex->tipo));
+                        // Recolectar textos buscables del grupo
+                        $searchableTextGroup = strtolower($groupName);
+                        foreach($examenesDelGrupo as $ex) {
+                            $searchableTextGroup .= ' ' . strtolower(str_replace('_',' ',$ex->tipo));
+                            $searchableTextGroup .= ' ' . strtolower($ex->grupoMateria->materia->nombre);
                         }
                     @endphp
                     
+                    <!-- Acordeón Principal: Grupo -->
                     <div class="bg-white shadow-md sm:rounded-xl border border-gray-200 overflow-hidden" 
-                         x-data="{ text: '{{ $searchableText }}', expanded: true }"
-                         x-show="search === '' || text.includes(search.toLowerCase())">
+                         x-data="{ textGroup: '{{ $searchableTextGroup }}', expandedGroup: true }"
+                         x-show="search === '' || textGroup.includes(search.toLowerCase())">
                         
-                        <!-- Cabecera del Grupo (Clickeable para minimizar) -->
-                        <div @click="expanded = !expanded" class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex items-center justify-between cursor-pointer hover:bg-gray-100 transition-colors">
-                            <h3 class="text-lg font-bold text-[#0A3254] flex items-center gap-3">
+                        <!-- Cabecera del Grupo -->
+                        <div @click="expandedGroup = !expandedGroup" class="bg-gray-100 border-b border-gray-200 px-6 py-4 flex items-center justify-between cursor-pointer hover:bg-gray-200 transition-colors">
+                            <h3 class="text-xl font-extrabold text-[#0A3254] flex items-center gap-3">
                                 <span class="bg-blue-100 text-blue-800 p-2 rounded-lg">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                                 </span>
                                 {{ $groupName }}
                             </h3>
                             <div class="flex items-center gap-4">
-                                <span class="bg-gray-200 text-gray-700 py-1 px-3 rounded-full text-xs font-bold">
-                                    {{ $groupExamenes->count() }} exámenes
+                                <span class="bg-white text-gray-700 py-1 px-3 rounded-full text-xs font-bold border border-gray-300 shadow-sm">
+                                    {{ $examenesDelGrupo->count() }} exámenes en total
                                 </span>
-                                <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" :class="expanded ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                <svg class="w-6 h-6 text-gray-500 transition-transform duration-200" :class="expandedGroup ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </div>
                         </div>
 
-                        <!-- Tabla de Exámenes del Grupo (Colapsable) -->
-                        <div x-show="expanded" x-transition class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead>
-                                    <tr style="background-color: #ffffff;">
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-extrabold text-gray-500 uppercase tracking-wider w-1/4">Tipo de Examen</th>
-                                        <th scope="col" class="px-6 py-3 text-center text-xs font-extrabold text-gray-500 uppercase tracking-wider">Puntaje Máx</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-extrabold text-gray-500 uppercase tracking-wider">Fecha y Hora</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-extrabold text-gray-500 uppercase tracking-wider">Estado</th>
-                                        <th scope="col" class="px-6 py-3 text-center text-xs font-extrabold text-gray-500 uppercase tracking-wider">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-100">
-                                    @foreach($groupExamenes as $ex)
-                                    <tr class="hover:bg-blue-50 transition-colors duration-150"
-                                        x-data="{ tipo: '{{ strtolower(str_replace('_',' ',$ex->tipo)) }}' }"
-                                        x-show="search === '' || '{{ strtolower($groupName) }}'.includes(search.toLowerCase()) || tipo.includes(search.toLowerCase())">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-bold text-gray-900 flex items-center gap-2">
-                                                <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                                                {{ ucfirst(str_replace('_',' ',$ex->tipo)) }}
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                                {{ $ex->puntaje_maximo }} pts
+                        <!-- Contenido del Grupo -->
+                        <div x-show="expandedGroup" x-transition class="p-4 space-y-4 bg-gray-50">
+                            
+                            @php
+                                // Nivel 2: Agrupar por Materia dentro del Grupo
+                                $groupedByMateria = $examenesDelGrupo->groupBy(function($item) {
+                                    return $item->grupoMateria->materia->nombre;
+                                });
+                            @endphp
+
+                            @foreach($groupedByMateria as $materiaName => $examenesDeMateria)
+                                @php
+                                    $searchableTextMateria = strtolower($materiaName);
+                                    foreach($examenesDeMateria as $ex) {
+                                        $searchableTextMateria .= ' ' . strtolower(str_replace('_',' ',$ex->tipo));
+                                    }
+                                @endphp
+
+                                <!-- Sub-Acordeón: Materia -->
+                                <div class="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden"
+                                     x-data="{ textMateria: '{{ $searchableTextMateria }}', expandedMateria: true }"
+                                     x-show="search === '' || textMateria.includes(search.toLowerCase()) || '{{ strtolower($groupName) }}'.includes(search.toLowerCase())">
+                                    
+                                    <!-- Cabecera de la Materia -->
+                                    <div @click="expandedMateria = !expandedMateria" class="bg-white border-b border-gray-100 px-5 py-3 flex items-center justify-between cursor-pointer hover:bg-blue-50 transition-colors">
+                                        <h4 class="text-md font-bold text-gray-800 flex items-center gap-2">
+                                            📘 {{ $materiaName }}
+                                        </h4>
+                                        <div class="flex items-center gap-3">
+                                            <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md">
+                                                {{ $examenesDeMateria->count() }} exámenes
                                             </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-semibold">
-                                            {{ $ex->fecha->format('d/m/Y') }} 
-                                            <span class="text-gray-400 font-normal ml-1">{{ \Carbon\Carbon::parse($ex->hora_inicio)->format('H:i') }} - {{ \Carbon\Carbon::parse($ex->hora_fin)->format('H:i') }}</span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            @if($ex->estado === 'finalizado')
-                                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">
-                                                    Finalizado
-                                                </span>
-                                            @else
-                                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800 border border-amber-200">
-                                                    {{ ucfirst($ex->estado) }}
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                            <a href="{{ route('profesor.calificar', $ex) }}" class="inline-flex items-center gap-1 text-sm font-bold transition-colors" style="color: #0A3254;" onmouseover="this.style.color='#D52B1E'" onmouseout="this.style.color='#0A3254'">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                                Calificar
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                            <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="expandedMateria ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tabla de Exámenes de la Materia -->
+                                    <div x-show="expandedMateria" x-transition class="overflow-x-auto">
+                                        <table class="min-w-full divide-y divide-gray-100">
+                                            <thead>
+                                                <tr style="background-color: #f8fafc;">
+                                                    <th scope="col" class="px-5 py-2.5 text-left text-xs font-extrabold text-gray-500 uppercase tracking-wider w-1/4">Tipo de Examen</th>
+                                                    <th scope="col" class="px-5 py-2.5 text-center text-xs font-extrabold text-gray-500 uppercase tracking-wider">Puntaje Máx</th>
+                                                    <th scope="col" class="px-5 py-2.5 text-left text-xs font-extrabold text-gray-500 uppercase tracking-wider">Fecha y Hora</th>
+                                                    <th scope="col" class="px-5 py-2.5 text-left text-xs font-extrabold text-gray-500 uppercase tracking-wider">Estado</th>
+                                                    <th scope="col" class="px-5 py-2.5 text-center text-xs font-extrabold text-gray-500 uppercase tracking-wider">Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="bg-white divide-y divide-gray-50">
+                                                @foreach($examenesDeMateria as $ex)
+                                                <tr class="hover:bg-blue-50 transition-colors duration-150"
+                                                    x-data="{ tipo: '{{ strtolower(str_replace('_',' ',$ex->tipo)) }}' }"
+                                                    x-show="search === '' || textMateria.includes(search.toLowerCase()) || '{{ strtolower($groupName) }}'.includes(search.toLowerCase()) || tipo.includes(search.toLowerCase())">
+                                                    <td class="px-5 py-3 whitespace-nowrap">
+                                                        <div class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                                            <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                                                            {{ ucfirst(str_replace('_',' ',$ex->tipo)) }}
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-5 py-3 whitespace-nowrap text-sm text-center">
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200">
+                                                            {{ $ex->puntaje_maximo }} pts
+                                                        </span>
+                                                    </td>
+                                                    <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-600 font-semibold">
+                                                        {{ $ex->fecha->format('d/m/Y') }} 
+                                                        <span class="text-gray-400 font-normal ml-1">{{ \Carbon\Carbon::parse($ex->hora_inicio)->format('H:i') }} - {{ \Carbon\Carbon::parse($ex->hora_fin)->format('H:i') }}</span>
+                                                    </td>
+                                                    <td class="px-5 py-3 whitespace-nowrap">
+                                                        @if($ex->estado === 'finalizado')
+                                                            <span class="px-2.5 py-1 inline-flex text-xs leading-4 font-bold rounded-full bg-green-100 text-green-800 border border-green-200">
+                                                                Finalizado
+                                                            </span>
+                                                        @else
+                                                            <span class="px-2.5 py-1 inline-flex text-xs leading-4 font-bold rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                                                                {{ ucfirst($ex->estado) }}
+                                                            </span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="px-5 py-3 whitespace-nowrap text-center text-sm font-medium">
+                                                        <a href="{{ route('profesor.calificar', $ex) }}" class="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-gray-300 rounded-md shadow-sm text-xs font-bold transition-colors hover:bg-gray-50" style="color: #0A3254;">
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                            Calificar
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 @empty
