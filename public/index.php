@@ -1,5 +1,8 @@
 <?php
 
+// Desactivar PCRE JIT para evitar el error de asignación de memoria en AWS con DomPDF
+ini_set('pcre.jit', '0');
+
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
