@@ -51,10 +51,7 @@
                             @forelse($reporteData as $r)
                             <tr class="hover:bg-blue-50 transition-colors duration-150">
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-bold text-gray-900 flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
-                                            🎓
-                                        </div>
+                                    <div class="text-sm font-bold text-gray-900">
                                         {{ $r['carrera'] }}
                                     </div>
                                 </td>

@@ -40,12 +40,66 @@
                             </h3>
                             
                             <label class="block text-sm font-bold text-gray-700 mb-2">Grupo y Materia <span class="text-red-500">*</span></label>
-                            <select name="grupo_materia_id" class="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-0 transition-colors bg-gray-50" required>
-                                <option value="">-- Seleccione una materia asignada --</option>
-                                @foreach($grupoMaterias as $gm)
-                                    <option value="{{ $gm->id }}">Grupo {{ $gm->grupo->nombre }} - {{ $gm->materia->nombre }} (Gestión {{ $gm->grupo->gestion->nombre }})</option>
-                                @endforeach
-                            </select>
+                            
+                            @php
+                                $groupedGMs = $grupoMaterias->groupBy(function($gm) {
+                                    return $gm->grupo->gestion->nombre . ' — ' . $gm->grupo->nombre;
+                                });
+                            @endphp
+
+                            <!-- Selector Personalizado Interactivo -->
+                            <div x-data="{ 
+                                open: false, 
+                                selected: '{{ old('grupo_materia_id') }}', 
+                                selectedText: '-- Seleccione una materia asignada --',
+                                init() {
+                                    @if(old('grupo_materia_id'))
+                                        @foreach($grupoMaterias as $gm)
+                                            if ('{{ $gm->id }}' === this.selected) {
+                                                this.selectedText = '{{ $gm->materia->nombre }} ({{ $gm->grupo->gestion->nombre }} — {{ $gm->grupo->nombre }})';
+                                            }
+                                        @endforeach
+                                    @endif
+                                }
+                            }" class="relative w-full">
+                                
+                                <!-- Botón del Selector -->
+                                <button type="button" @click="open = !open" 
+                                    class="w-full p-3 rounded-lg border-2 border-gray-200 focus:outline-none transition-colors bg-gray-50 flex justify-between items-center shadow-sm"
+                                    :class="open ? 'border-[#0A3254] ring-4 ring-blue-100' : 'hover:border-gray-300'">
+                                    <span x-text="selectedText" class="truncate" :class="selected === '' ? 'text-gray-500 font-medium' : 'text-[#0A3254] font-bold'"></span>
+                                    <svg class="w-5 h-5 text-gray-400 transition-transform duration-200 flex-shrink-0" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+
+                                <!-- Input Oculto para el Formulario -->
+                                <input type="hidden" name="grupo_materia_id" x-model="selected" required>
+
+                                <!-- Menú Desplegable -->
+                                <div x-show="open" @click.away="open = false" x-transition.opacity
+                                    class="absolute z-50 w-full mt-2 bg-white border-2 border-gray-100 rounded-xl shadow-xl max-h-72 overflow-y-auto divide-y divide-gray-100" style="display: none;">
+                                    
+                                    @foreach($groupedGMs as $groupLabel => $materias)
+                                        <div x-data="{ groupOpen: true }" class="bg-white">
+                                            <!-- Cabecera Colapsable del Grupo -->
+                                            <div @click="groupOpen = !groupOpen" class="bg-gray-100 px-4 py-2.5 flex justify-between items-center cursor-pointer hover:bg-gray-200 transition-colors sticky top-0 z-10 border-y border-gray-200">
+                                                <span class="font-extrabold text-xs text-gray-600 uppercase tracking-wider">{{ $groupLabel }}</span>
+                                                <svg class="w-4 h-4 text-gray-500 transition-transform duration-200" :class="groupOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                            </div>
+                                            
+                                            <!-- Opciones de Materia -->
+                                            <div x-show="groupOpen">
+                                                @foreach($materias as $gm)
+                                                    <div @click="selected = '{{ $gm->id }}'; selectedText = '{{ $gm->materia->nombre }} ({{ $groupLabel }})'; open = false"
+                                                         class="px-5 py-3 hover:bg-blue-50 cursor-pointer border-l-4 border-transparent hover:border-[#0A3254] transition-all text-sm font-medium text-gray-700"
+                                                         :class="selected === '{{ $gm->id }}' ? 'bg-blue-50 border-[#0A3254] text-[#0A3254] font-bold' : ''">
+                                                        {{ $gm->materia->nombre }}
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
                         </div>
 
                         <div class="col-span-1 md:col-span-2">

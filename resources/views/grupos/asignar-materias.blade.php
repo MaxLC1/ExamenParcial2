@@ -51,37 +51,47 @@
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Materia</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Profesor</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Horario</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Modalidad</th>
-                                    <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Acciones</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Horarios Asignados</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
-                                @foreach($asignaciones as $a)
-                                <tr class="hover:bg-blue-50 transition-colors">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200">
-                                            {{ $a->materia->nombre }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 font-bold text-gray-900">{{ $a->profesor->nombre_completo }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">
-                                        <div class="flex items-center gap-1">
-                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                            {{ $a->horario?->descripcion ?? '-' }}
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold capitalize text-gray-700">{{ $a->modalidad_clase }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right">
-                                        <form action="{{ route('grupos.eliminar-asignacion', [$grupo->id, $a->id]) }}" method="POST" onsubmit="return confirm('¿Seguro que desea retirar esta materia del grupo?');" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-800 font-bold p-1 rounded hover:bg-red-50 transition-colors inline-flex items-center gap-1" title="Eliminar Asignación">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
+                                @php
+                                    $groupedAsignaciones = $asignaciones->groupBy(function($a) {
+                                        return $a->materia_id . '-' . $a->profesor_id;
+                                    });
+                                @endphp
+                                @foreach($groupedAsignaciones as $group)
+                                    @php $first = $group->first(); @endphp
+                                    <tr class="hover:bg-blue-50 transition-colors">
+                                        <td class="px-6 py-4 align-top whitespace-nowrap">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200">
+                                                {{ $first->materia->nombre }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 align-top font-bold text-gray-900 whitespace-nowrap">
+                                            {{ $first->profesor->nombre_completo }}
+                                        </td>
+                                        <td class="px-6 py-4 align-top">
+                                            <div class="flex flex-wrap gap-2">
+                                                @foreach($group as $a)
+                                                    <div class="inline-flex items-center bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 shadow-sm">
+                                                        <div class="flex items-center gap-1.5 text-xs text-gray-700 font-medium whitespace-nowrap">
+                                                            <svg class="w-3.5 h-3.5 text-[#0A3254]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                            <span>{{ str_replace(':00 -', ' -', str_replace(':00 ', ' ', $a->horario?->descripcion ?? '-')) }}</span>
+                                                            <span class="text-gray-400 font-normal italic ml-1">({{ ucfirst(substr($a->modalidad_clase, 0, 4)) }}.)</span>
+                                                        </div>
+                                                        <form action="{{ route('grupos.eliminar-asignacion', [$grupo->id, $a->id]) }}" method="POST" onsubmit="return confirm('¿Seguro que desea retirar este horario?');" class="inline-flex ml-2 border-l border-gray-200 pl-2">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="text-red-500 hover:text-red-700 font-bold p-0.5 rounded transition-colors" title="Eliminar Horario">
+                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>

@@ -5,7 +5,7 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" x-data="{ search: '' }">
             
             <!-- Banner Institucional FICCT -->
             <div class="mb-8 relative overflow-hidden shadow-xl" style="background: linear-gradient(135deg, #0A3254 0%, #114c81 100%); border-radius: 1rem;">
@@ -38,97 +38,133 @@
             @endif
 
             <!-- Controles Superiores -->
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-                <form method="GET" class="flex items-center gap-3 w-full sm:w-auto">
-                    <span class="text-sm font-bold text-gray-500">Filtrar Gestión:</span>
-                    <select name="gestion_id" class="rounded-lg border-gray-300 shadow-sm text-sm font-semibold text-gray-700 bg-gray-50 focus:border-blue-500 focus:ring-blue-500" onchange="this.form.submit()">
-                        @foreach($gestiones as $g)
-                            <option value="{{ $g->id }}" {{ $gestionId == $g->id ? 'selected' : '' }}>{{ $g->nombre }}</option>
-                        @endforeach
-                    </select>
-                </form>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+                    <!-- Filtro por Gestión (Existente) -->
+                    <form method="GET" class="flex items-center gap-3 w-full sm:w-auto">
+                        <span class="text-sm font-bold text-gray-500 whitespace-nowrap">Filtrar Gestión:</span>
+                        <select name="gestion_id" class="rounded-lg border-gray-300 shadow-sm text-sm font-semibold text-gray-700 bg-gray-50 focus:border-[#0A3254] focus:ring-[#0A3254] w-full sm:w-auto" onchange="this.form.submit()">
+                            @foreach($gestiones as $g)
+                                <option value="{{ $g->id }}" {{ $gestionId == $g->id ? 'selected' : '' }}>{{ $g->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </form>
+                    
+                    <!-- NUEVO: Barra de Búsqueda -->
+                    <div class="relative w-full sm:w-72">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                        <input type="text" x-model="search" class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 shadow-sm focus:ring-[#0A3254] focus:border-[#0A3254]" placeholder="Buscar materia, grupo o tipo...">
+                    </div>
+                </div>
 
-                <a href="{{ route('examenes.create') }}" class="font-bold px-5 py-2.5 rounded-lg text-white shadow-md transition-all flex items-center gap-2 w-full sm:w-auto justify-center" style="background-color: #D52B1E;" onmouseover="this.style.backgroundColor='#b82519'" onmouseout="this.style.backgroundColor='#D52B1E'">
+                <a href="{{ route('examenes.create') }}" class="font-bold px-5 py-2.5 rounded-lg text-white shadow-md transition-all flex items-center gap-2 w-full md:w-auto justify-center" style="background-color: #D52B1E;" onmouseover="this.style.backgroundColor='#b82519'" onmouseout="this.style.backgroundColor='#D52B1E'">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     Programar Nuevo Examen
                 </a>
             </div>
 
-            <!-- Tabla Principal -->
-            <div class="bg-white shadow-md sm:rounded-xl overflow-hidden border border-gray-200">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead>
-                            <tr style="background-color: #f8fafc;">
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-extrabold text-gray-500 uppercase tracking-wider">Grupo</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-extrabold text-gray-500 uppercase tracking-wider">Materia</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-extrabold text-gray-500 uppercase tracking-wider">Tipo</th>
-                                <th scope="col" class="px-6 py-4 text-center text-xs font-extrabold text-gray-500 uppercase tracking-wider">Pts Máx</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-extrabold text-gray-500 uppercase tracking-wider">Fecha</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-extrabold text-gray-500 uppercase tracking-wider">Estado</th>
-                                <th scope="col" class="px-6 py-4 text-center text-xs font-extrabold text-gray-500 uppercase tracking-wider">Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-100">
-                            @forelse($examenes as $ex)
-                            <tr class="hover:bg-blue-50 transition-colors duration-150">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-8 w-8 rounded bg-blue-100 text-blue-800 flex items-center justify-center font-bold text-sm">
-                                            {{ $ex->grupoMateria->grupo->nombre }}
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-bold text-gray-900">{{ $ex->grupoMateria->materia->nombre }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">
-                                    {{ ucfirst(str_replace('_',' ',$ex->tipo)) }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                        {{ $ex->puntaje_maximo }} pts
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-semibold">
-                                    {{ $ex->fecha->format('d/m/Y') }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($ex->estado === 'finalizado')
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">
-                                            Finalizado
-                                        </span>
-                                    @else
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800 border border-amber-200">
-                                            {{ ucfirst($ex->estado) }}
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                    <a href="{{ route('profesor.calificar', $ex) }}" class="inline-flex items-center gap-1 text-sm font-bold transition-colors" style="color: #0A3254;" onmouseover="this.style.color='#D52B1E'" onmouseout="this.style.color='#0A3254'">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                        Calificar
-                                    </a>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="7" class="px-6 py-10 text-center">
-                                    <div class="flex flex-col items-center justify-center text-gray-400">
-                                        <svg class="mb-3 opacity-50" style="width: 4rem; height: 4rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                                        <p class="text-base font-medium text-gray-500">No hay exámenes programados para esta gestión.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-                @if($examenes->hasPages())
-                    <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
-                        {{ $examenes->withQueryString()->links() }}
+            @php
+                $groupedExamenes = $examenes->groupBy(function($item) {
+                    return $item->grupoMateria->grupo->nombre . ' - ' . $item->grupoMateria->materia->nombre;
+                });
+            @endphp
+
+            <!-- Lista de Grupos -->
+            <div class="space-y-8">
+                @forelse($groupedExamenes as $groupName => $groupExamenes)
+                    @php
+                        // Recolectar textos buscables de este grupo para el filtrado con Alpine.js
+                        $searchableText = strtolower($groupName);
+                        foreach($groupExamenes as $ex) {
+                            $searchableText .= ' ' . strtolower(str_replace('_',' ',$ex->tipo));
+                        }
+                    @endphp
+                    
+                    <div class="bg-white shadow-md sm:rounded-xl border border-gray-200 overflow-hidden" 
+                         x-data="{ text: '{{ $searchableText }}', expanded: true }"
+                         x-show="search === '' || text.includes(search.toLowerCase())">
+                        
+                        <!-- Cabecera del Grupo (Clickeable para minimizar) -->
+                        <div @click="expanded = !expanded" class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex items-center justify-between cursor-pointer hover:bg-gray-100 transition-colors">
+                            <h3 class="text-lg font-bold text-[#0A3254] flex items-center gap-3">
+                                <span class="bg-blue-100 text-blue-800 p-2 rounded-lg">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                </span>
+                                {{ $groupName }}
+                            </h3>
+                            <div class="flex items-center gap-4">
+                                <span class="bg-gray-200 text-gray-700 py-1 px-3 rounded-full text-xs font-bold">
+                                    {{ $groupExamenes->count() }} exámenes
+                                </span>
+                                <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" :class="expanded ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+
+                        <!-- Tabla de Exámenes del Grupo (Colapsable) -->
+                        <div x-show="expanded" x-transition class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead>
+                                    <tr style="background-color: #ffffff;">
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-extrabold text-gray-500 uppercase tracking-wider w-1/4">Tipo de Examen</th>
+                                        <th scope="col" class="px-6 py-3 text-center text-xs font-extrabold text-gray-500 uppercase tracking-wider">Puntaje Máx</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-extrabold text-gray-500 uppercase tracking-wider">Fecha y Hora</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-extrabold text-gray-500 uppercase tracking-wider">Estado</th>
+                                        <th scope="col" class="px-6 py-3 text-center text-xs font-extrabold text-gray-500 uppercase tracking-wider">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-100">
+                                    @foreach($groupExamenes as $ex)
+                                    <tr class="hover:bg-blue-50 transition-colors duration-150"
+                                        x-data="{ tipo: '{{ strtolower(str_replace('_',' ',$ex->tipo)) }}' }"
+                                        x-show="search === '' || '{{ strtolower($groupName) }}'.includes(search.toLowerCase()) || tipo.includes(search.toLowerCase())">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                                <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                                                {{ ucfirst(str_replace('_',' ',$ex->tipo)) }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                {{ $ex->puntaje_maximo }} pts
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-semibold">
+                                            {{ $ex->fecha->format('d/m/Y') }} 
+                                            <span class="text-gray-400 font-normal ml-1">{{ \Carbon\Carbon::parse($ex->hora_inicio)->format('H:i') }} - {{ \Carbon\Carbon::parse($ex->hora_fin)->format('H:i') }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            @if($ex->estado === 'finalizado')
+                                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">
+                                                    Finalizado
+                                                </span>
+                                            @else
+                                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                                                    {{ ucfirst($ex->estado) }}
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                            <a href="{{ route('profesor.calificar', $ex) }}" class="inline-flex items-center gap-1 text-sm font-bold transition-colors" style="color: #0A3254;" onmouseover="this.style.color='#D52B1E'" onmouseout="this.style.color='#0A3254'">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                Calificar
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                @endif
+                @empty
+                    <div class="bg-white shadow-md sm:rounded-xl overflow-hidden border border-gray-200 p-10 text-center">
+                        <div class="flex flex-col items-center justify-center text-gray-400">
+                            <svg class="mb-3 opacity-50" style="width: 4rem; height: 4rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                            <p class="text-base font-medium text-gray-500">No hay exámenes programados para esta gestión.</p>
+                        </div>
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>

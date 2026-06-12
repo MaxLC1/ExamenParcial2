@@ -27,10 +27,10 @@ class AsignacionCarreraService
     {
         $carreras = Carrera::all()->keyBy('codigo');
         $cupos = [
-            $carreras['INF']->id => $gestion->cupo_informatica,
-            $carreras['SIS']->id => $gestion->cupo_sistemas,
-            $carreras['RED']->id => $gestion->cupo_redes,
-            $carreras['ROB']->id => $gestion->cupo_robotica,
+            $carreras['187-3']->id => $gestion->cupo_informatica, // Informática
+            $carreras['187-4']->id => $gestion->cupo_sistemas,    // Sistemas
+            $carreras['187-5']->id => $gestion->cupo_redes,       // Redes
+            $carreras['323-0']->id => $gestion->cupo_robotica,    // Robótica
         ];
 
         $postulantes = Postulante::where('gestion_id', $gestion->id)

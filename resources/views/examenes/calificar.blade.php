@@ -68,14 +68,22 @@
                                 @foreach($postulantes as $index => $p)
                                     <tr class="hover:bg-blue-50 transition-colors {{ $index % 2 === 0 ? 'bg-white' : 'bg-gray-50' }}"
                                         x-show="search === '' || '{{ strtolower($p->ci) }}'.includes(search.toLowerCase()) || '{{ strtolower($p->nombre_completo) }}'.includes(search.toLowerCase())">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $p->ci }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">{{ $p->nombre_completo }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                                            <input type="number" name="notas[{{ $p->id }}]"
-                                                value="{{ $calificaciones[$p->id]->nota ?? '' }}"
-                                                min="0" max="{{ $examen->puntaje_maximo }}" step="0.01"
-                                                class="w-28 rounded-lg border-gray-300 shadow-sm text-center font-bold text-lg focus:border-red-500 focus:ring-red-500" required>
-                                            <span class="text-xs text-gray-500 block mt-1">/ {{ $examen->puntaje_maximo }}</span>
+                                        <td class="px-6 py-5 whitespace-nowrap text-sm font-medium">
+                                            <span class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-md border border-gray-200 font-mono shadow-sm">{{ $p->ci }}</span>
+                                        </td>
+                                        <td class="px-6 py-5 whitespace-nowrap text-sm text-gray-800 font-bold">
+                                            {{ $p->nombre_completo }}
+                                        </td>
+                                        <td class="px-6 py-5 whitespace-nowrap text-center">
+                                            <div class="inline-flex items-center bg-white border-2 border-gray-200 rounded-xl overflow-hidden focus-within:ring-4 focus-within:ring-blue-100 focus-within:border-[#0A3254] transition-all shadow-sm group">
+                                                <input type="number" name="notas[{{ $p->id }}]"
+                                                    value="{{ $calificaciones[$p->id]->nota ?? '' }}"
+                                                    min="0" max="{{ $examen->puntaje_maximo }}" step="0.01"
+                                                    class="w-24 border-0 bg-transparent text-center font-extrabold text-xl text-[#0A3254] focus:ring-0 p-3 placeholder-gray-300 transition-colors" placeholder="--" required>
+                                                <div class="bg-gray-50 border-l-2 border-gray-200 px-4 py-3 text-sm font-bold text-gray-500 h-full flex items-center group-focus-within:bg-[#0A3254] group-focus-within:border-[#0A3254] group-focus-within:text-white transition-colors">
+                                                    / {{ $examen->puntaje_maximo }}
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
