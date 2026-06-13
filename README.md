@@ -44,13 +44,14 @@ php artisan serve
 |---|---|---|
 | `admin@ficct.edu.bo` | Administrador | `admin123` |
 | `coordinador@ficct.edu.bo` | Coordinador (Admin) | `Password123` |
+| `alerios839@gmail.com` | Autoridad | `8428287` |
 | `computacion@ficct.edu.bo` | Profesor (Computación) | `Password123` |
 | `matematicas@ficct.edu.bo` | Profesor (Matemáticas) | `Password123` |
 | `fisica@ficct.edu.bo` | Profesor (Física) | `Password123` |
 | `ingles@ficct.edu.bo` | Profesor (Inglés) | `Password123` |
-| `estudiante1@ficct.edu.bo` | Postulante (Alumno) | `Password123` |
-| `estudiante2@ficct.edu.bo` | Postulante (Alumno) | `Password123` |
-| `estudiante3@ficct.edu.bo` | Postulante (Alumno) | `Password123` |
+| `alerivera157@gmail.com` | Postulante (Alumno) | `9646795` |
+| `melcastellanos179@gmail.com` | Postulante (Alumno) | `8766833` |
+| `nicvelasco689@gmail.com` | Postulante (Alumno) | `7735170` |
 
 ---
 
