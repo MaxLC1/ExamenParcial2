@@ -21,7 +21,8 @@ class ReporteController extends Controller
     public function index()
     {
         $gestiones = Gestion::orderByDesc('created_at')->get();
-        return view('reportes.index', compact('gestiones'));
+        $materias = Materia::all();
+        return view('reportes.index', compact('gestiones', 'materias'));
     }
 
     public function porMateria(Request $request)
@@ -179,8 +180,10 @@ class ReporteController extends Controller
         $filtroEstado = $request->get('estado'); // 'aprobado', 'reprobado', 'todos'
 
         $reporteData = [];
+        $mostrarTabla = false;
 
-        if ($request->isMethod('post') || $request->get('formato') === 'pdf') {
+        if ($request->isMethod('post') || $request->has('generar') || $request->has('materia_id') || $request->has('estado') || $request->get('formato') === 'pdf') {
+            $mostrarTabla = true;
             $query = Postulante::whereHas('grupo', fn($q) => $q->where('gestion_id', $gestionId));
             $postulantes = $query->get();
             $calService = app(CalificacionService::class);
@@ -228,6 +231,6 @@ class ReporteController extends Controller
             return $pdf->download("reporte_personalizado.pdf");
         }
 
-        return view('reportes.personalizado', compact('reporteData', 'columnasSeleccionadas', 'gestiones', 'gestionId', 'materias', 'carreras', 'filtroMateria', 'filtroEstado'));
+        return view('reportes.personalizado', compact('reporteData', 'columnasSeleccionadas', 'gestiones', 'gestionId', 'materias', 'carreras', 'filtroMateria', 'filtroEstado', 'mostrarTabla'));
     }
 }

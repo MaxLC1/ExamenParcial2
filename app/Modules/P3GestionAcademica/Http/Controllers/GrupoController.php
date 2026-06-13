@@ -23,8 +23,9 @@ class GrupoController extends Controller
             ->when($gestionId, fn($q) => $q->where('gestion_id', $gestionId))
             ->paginate(15);
         $gestiones = Gestion::orderByDesc('created_at')->get();
+        $totalInscritos = \App\Modules\P2GestionProfesoresPostulantes\Models\Postulante::where('gestion_id', $gestionId)->count();
 
-        return view('grupos.index', compact('grupos', 'gestiones', 'gestionId'));
+        return view('grupos.index', compact('grupos', 'gestiones', 'gestionId', 'totalInscritos'));
     }
 
     public function create()

@@ -39,7 +39,7 @@
                             <div class="space-y-5">
                                 <div>
                                     <label class="block text-sm font-bold text-gray-700 mb-2">Gestión Académica</label>
-                                    <select name="gestion_id" class="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-0 transition-colors bg-white font-medium text-gray-800">
+                                    <select name="gestion_id" onchange="this.form.submit()" class="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-0 transition-colors bg-white font-medium text-gray-800">
                                         @foreach($gestiones as $g)
                                             <option value="{{ $g->id }}" {{ $gestionId == $g->id ? 'selected' : '' }}>{{ $g->nombre }}</option>
                                         @endforeach
@@ -48,7 +48,7 @@
                                 
                                 <div>
                                     <label class="block text-sm font-bold text-gray-700 mb-2">Filtrar por Materia</label>
-                                    <select name="materia_id" class="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-0 transition-colors bg-white font-medium text-gray-800">
+                                    <select name="materia_id" onchange="this.form.submit()" class="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-0 transition-colors bg-white font-medium text-gray-800">
                                         <option value="">-- Todas las Materias --</option>
                                         @foreach($materias as $m)
                                             <option value="{{ $m->id }}" {{ $filtroMateria == $m->id ? 'selected' : '' }}>{{ $m->nombre }}</option>
@@ -58,7 +58,7 @@
                                 
                                 <div>
                                     <label class="block text-sm font-bold text-gray-700 mb-2">Filtrar por Estado</label>
-                                    <select name="estado" class="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-0 transition-colors bg-white font-medium text-gray-800">
+                                    <select name="estado" onchange="this.form.submit()" class="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-0 transition-colors bg-white font-medium text-gray-800">
                                         <option value="todos" {{ $filtroEstado == 'todos' ? 'selected' : '' }}>-- Todos --</option>
                                         <option value="aprobado" {{ $filtroEstado == 'aprobado' ? 'selected' : '' }}>Aprobados</option>
                                         <option value="reprobado" {{ $filtroEstado == 'reprobado' ? 'selected' : '' }}>Reprobados</option>
@@ -112,8 +112,8 @@
                 </form>
             </div>
             
-            @if(request()->isMethod('post') && request()->get('formato') !== 'pdf')
-                <div class="bg-white shadow-xl sm:rounded-2xl overflow-hidden border border-gray-200">
+            @if($mostrarTabla && request()->get('formato') !== 'pdf')
+                <div id="resultados-tabla" class="bg-white shadow-xl sm:rounded-2xl overflow-hidden border border-gray-200 mt-8">
                     <div class="px-8 py-5" style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;">
                         <h3 class="font-extrabold text-xl text-gray-800 flex items-center gap-2">
                             <span class="text-2xl">📋</span>
@@ -178,4 +178,17 @@
             @endif
         </div>
     </div>
+
+    @if($mostrarTabla && request()->get('formato') !== 'pdf')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const tabla = document.getElementById('resultados-tabla');
+                if (tabla) {
+                    tabla.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 300); // Pequeño retraso para asegurar que la vista cargó
+        });
+    </script>
+    @endif
 </x-app-layout>

@@ -56,19 +56,36 @@
             </div>
 
             @if(Auth::user()->isAdmin())
-                <!-- Panel de Asignación Masiva -->
-                <div class="bg-white shadow-md sm:rounded-xl mb-8 border border-gray-100 overflow-hidden">
+                <!-- Panel de Asignación Masiva y Cálculo Automático -->
+                <div class="bg-white shadow-md sm:rounded-xl mb-8 border border-gray-100 overflow-hidden"
+                     x-data="{ 
+                         inscritos: {{ $totalInscritos }},
+                         capacidad: 70,
+                         get gruposEstimados() {
+                             return this.inscritos > 0 ? Math.ceil(this.inscritos / this.capacidad) : 0;
+                         }
+                     }">
                     <div class="px-6 py-4 border-b border-gray-200" style="background-color: #f8fafc; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;">
-                        <h4 class="font-extrabold text-lg" style="color: #0A3254; display: flex; align-items: center; gap: 0.5rem;">
-                            <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                            Distribución Masiva de Postulantes
-                        </h4>
+                        <div>
+                            <h4 class="font-extrabold text-lg" style="color: #0A3254; display: flex; align-items: center; gap: 0.5rem;">
+                                <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                Distribución Masiva de Postulantes
+                            </h4>
+                            <div class="mt-2 text-sm text-gray-600 flex gap-4">
+                                <span class="bg-blue-100 text-blue-800 font-bold px-2 py-1 rounded">
+                                    Total Inscritos: <span x-text="inscritos"></span>
+                                </span>
+                                <span class="bg-green-100 text-green-800 font-bold px-2 py-1 rounded">
+                                    Grupos Estimados: <span x-text="gruposEstimados"></span>
+                                </span>
+                            </div>
+                        </div>
                         <form method="POST" action="{{ route('grupos.asignar-postulantes') }}" style="display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin: 0;">
                             @csrf
                             <input type="hidden" name="gestion_id" value="{{ $gestionId }}">
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <label class="text-sm font-bold text-gray-700">Capacidad por Aula:</label>
-                                <input type="number" name="capacidad" value="70" min="30" max="100" class="rounded-lg border-gray-300 shadow-sm text-center font-bold" style="width: 5rem; padding: 0.5rem;">
+                                <label class="text-sm font-bold text-gray-700">Max por Aula:</label>
+                                <input type="number" name="capacidad" x-model="capacidad" min="30" max="100" class="rounded-lg border-gray-300 shadow-sm text-center font-bold" style="width: 5rem; padding: 0.5rem;">
                             </div>
                             <button type="submit" class="text-white font-bold shadow-md transition-colors" style="background-color: #D52B1E; padding: 0.5rem 1.25rem; border-radius: 0.5rem; border: none; cursor: pointer;" onmouseover="this.style.backgroundColor='#b82519'" onmouseout="this.style.backgroundColor='#D52B1E'">
                                 Ejecutar Distribución

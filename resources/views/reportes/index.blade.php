@@ -33,8 +33,111 @@
                 <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-2xl transform translate-x-1/3 -translate-y-1/4"></div>
             </div>
 
-            <!-- Botón hacia Reporte Personalizado -->
-            <div class="mb-8 flex justify-end">
+            <!-- Botón hacia Reporte Personalizado y Asistente de Voz Avanzado -->
+            <div class="mb-8 flex flex-wrap justify-end gap-4" x-data="{
+                isListening: false,
+                transcript: '',
+                gestionActivaId: '{{ $gestiones->first()?->id ?? 1 }}',
+                
+                // Mapeo dinámico de materias desde la base de datos
+                materiasBD: [
+                    @foreach($materias as $m)
+                        { id: '{{ $m->id }}', nombre: '{{ $m->nombre }}'.toLowerCase() },
+                    @endforeach
+                ],
+                
+                startVoiceAssistant() {
+                    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                        alert('Tu navegador no soporta reconocimiento de voz. Usa Google Chrome o Microsoft Edge.');
+                        return;
+                    }
+                    
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    const recognition = new SpeechRecognition();
+                    recognition.lang = 'es-ES';
+                    recognition.interimResults = false;
+                    recognition.maxAlternatives = 1;
+                    
+                    this.isListening = true;
+                    this.transcript = 'Escuchando... Di comandos como \u0022Aprobados de Física\u0022 o \u0022Reprobados de Computación\u0022';
+                    
+                    recognition.onresult = (event) => {
+                        const speechResult = event.results[0][0].transcript.toLowerCase();
+                        this.transcript = 'He escuchado: \'' + speechResult + '\'';
+                        this.isListening = false;
+                        
+                        setTimeout(() => {
+                            // 1. Detección de Intenciones Avanzadas (Aprobados/Reprobados + Materia)
+                            let isAprobado = speechResult.includes('aprobado');
+                            let isReprobado = speechResult.includes('reprobado');
+                            
+                            let normalizedSpeech = speechResult.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                            let materiaEncontrada = this.materiasBD.find(m => {
+                                let normName = m.nombre.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                                let singularName = normName.endsWith('s') && normName !== 'ingles' ? normName.slice(0, -1) : normName;
+                                return normalizedSpeech.includes(normName) || normalizedSpeech.includes(singularName);
+                            });
+                            
+                            if (materiaEncontrada || isAprobado || isReprobado) {
+                                // Construir URL con parámetros GET para generar el reporte dinámicamente
+                                let url = `/admin/reportes/personalizado?gestion_id=${this.gestionActivaId}&generar=1`;
+                                
+                                if (materiaEncontrada) {
+                                    url += `&materia_id=${materiaEncontrada.id}`;
+                                }
+                                
+                                if (isAprobado) url += `&estado=aprobado`;
+                                else if (isReprobado) url += `&estado=reprobado`;
+                                else url += `&estado=todos`;
+                                
+                                this.transcript = '¡Entendido! Generando reporte dinámico...';
+                                setTimeout(() => window.location.href = url, 500);
+                                return;
+                            }
+                            
+                            // 2. Detección de Comandos Simples Anteriores
+                            if (speechResult.includes('materia') || speechResult.includes('materias')) {
+                                window.location.href = '/admin/reportes/por-materia?gestion_id=' + this.gestionActivaId;
+                            } else if (speechResult.includes('profesor') || speechResult.includes('docente')) {
+                                window.location.href = '/admin/reportes/por-profesor?gestion_id=' + this.gestionActivaId;
+                            } else if (speechResult.includes('carrera') || speechResult.includes('carreras')) {
+                                window.location.href = '/admin/reportes/por-carrera?gestion_id=' + this.gestionActivaId;
+                            } else {
+                                alert('Comando no reconocido. Intenta decir: \u0022Aprobados de Matemáticas\u0022.');
+                            }
+                        }, 1000);
+                    };
+                    
+                    recognition.onerror = (event) => {
+                        this.isListening = false;
+                        alert('Error de reconocimiento: ' + event.error);
+                    };
+                    
+                    recognition.onend = () => {
+                        this.isListening = false;
+                    };
+                    
+                    recognition.start();
+                }
+            }">
+
+                <!-- Modal de Feedback de Voz -->
+                <div x-show="isListening || transcript" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity">
+                    <div class="bg-white p-8 rounded-2xl shadow-2xl text-center max-w-sm w-full transform scale-100 transition-transform">
+                        <div class="mb-4 relative w-20 h-20 mx-auto flex items-center justify-center rounded-full" :class="isListening ? 'bg-red-100 animate-pulse' : 'bg-green-100'">
+                            <svg class="w-10 h-10" :class="isListening ? 'text-red-500' : 'text-green-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-extrabold text-gray-800 mb-2">Asistente de IA (Voz)</h3>
+                        <p class="text-gray-600 font-medium" x-text="transcript"></p>
+                        <button x-show="!isListening && transcript" @click="transcript = ''" class="mt-6 w-full px-4 py-2 bg-gray-100 text-gray-700 font-bold rounded-lg hover:bg-gray-200 transition">Cerrar</button>
+                    </div>
+                </div>
+
+                <button @click="startVoiceAssistant()" class="font-bold px-6 py-3 rounded-lg shadow-md transition-all flex items-center gap-2 text-white" style="background-color: #D52B1E;" onmouseover="this.style.backgroundColor='#b82519'" onmouseout="this.style.backgroundColor='#D52B1E'">
+                    <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                    Consultar por Voz (IA)
+                </button>
+
                 <a href="{{ route('reportes.personalizado') }}" class="font-bold px-6 py-3 rounded-lg shadow-md transition-all flex items-center gap-2 text-white" style="background-color: #0A3254;" onmouseover="this.style.backgroundColor='#072440'" onmouseout="this.style.backgroundColor='#0A3254'">
                     <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
                     Constructor de Reportes (Ad-Hoc)
