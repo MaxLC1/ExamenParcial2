@@ -188,7 +188,7 @@ class ReporteController extends Controller
             $query = Postulante::with([
                 'grupo.grupoMaterias.materia', 
                 'grupo.grupoMaterias.examenes.calificaciones', 
-                'carreraAsignada'
+                'asignacionCarrera.carrera'
             ])->whereHas('grupo', fn($q) => $q->where('gestion_id', $gestionId));
             
             $postulantes = $query->get();
@@ -237,7 +237,7 @@ class ReporteController extends Controller
                     'email' => $p->correo ?? '-',
                     'nota' => $nota,
                     'estado' => $estado,
-                    'carrera_asignada' => $p->carreraAsignada ? $p->carreraAsignada->nombre : 'Sin Asignar',
+                    'carrera_asignada' => $p->asignacionCarrera && $p->asignacionCarrera->carrera ? $p->asignacionCarrera->carrera->nombre : 'Sin Asignar',
                 ];
             }
         }
