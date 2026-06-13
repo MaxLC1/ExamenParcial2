@@ -68,7 +68,11 @@
             @php
                 // Nivel 1: Agrupar por Grupo
                 $groupedByGrupo = $examenes->groupBy(function($item) {
-                    return 'Grupo ' . $item->grupoMateria->grupo->nombre;
+                    $nombre = $item->grupoMateria->grupo->nombre;
+                    if (stripos(trim($nombre), 'grupo') === 0) {
+                        return ucfirst(trim($nombre));
+                    }
+                    return 'Grupo ' . trim($nombre);
                 });
             @endphp
 
