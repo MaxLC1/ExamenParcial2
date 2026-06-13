@@ -20,7 +20,7 @@
                     <div>
                         <h3 class="text-3xl font-extrabold mb-2">{{ ucfirst(str_replace('_',' ',$examen->tipo)) }}</h3>
                         <p class="text-blue-200 text-lg font-medium">
-                            {{ $examen->grupoMateria->materia->nombre }} | Grupo: <span class="font-bold text-white">{{ $examen->grupoMateria->grupo->nombre }}</span>
+                            {{ $examen->grupoMateria->materia->nombre }} | <span class="font-bold text-white">{{ $examen->grupoMateria->grupo->nombre }}</span>
                         </p>
                         <div class="mt-4 flex flex-wrap gap-3">
                             <div class="flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-400 border-opacity-30 shadow-sm" style="background-color: rgba(255, 255, 255, 0.1);">

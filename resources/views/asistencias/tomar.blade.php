@@ -12,7 +12,7 @@
                     <div>
                         <h3 class="text-3xl font-extrabold mb-2">{{ $grupoMateria->materia->nombre }}</h3>
                         <p class="text-blue-200 text-lg font-medium mb-4">
-                            Grupo: <span class="font-bold text-white text-xl">{{ $grupoMateria->grupo->nombre }}</span>
+                            <span class="font-bold text-white text-xl">{{ $grupoMateria->grupo->nombre }}</span>
                         </p>
                         
                         <!-- Filtro de Fecha integrado en el banner -->

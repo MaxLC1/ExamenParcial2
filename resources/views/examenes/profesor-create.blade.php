@@ -19,7 +19,7 @@
                     
                     <div class="mb-6 bg-gray-50 p-4 rounded-lg border">
                         <p class="text-sm text-gray-600 mb-1"><strong>Materia:</strong> {{ $grupoMateria->materia->nombre }}</p>
-                        <p class="text-sm text-gray-600 mb-1"><strong>Grupo:</strong> {{ $grupoMateria->grupo->nombre }}</p>
+                        <p class="text-sm text-gray-600 mb-1"><strong>{{ $grupoMateria->grupo->nombre }}</strong></p>
                     </div>
 
                     <div class="mb-4">

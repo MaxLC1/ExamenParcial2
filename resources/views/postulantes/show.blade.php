@@ -7,7 +7,7 @@
                     <div><span class="text-sm text-gray-500">CI:</span> <span class="font-semibold">{{ $postulante->ci }}</span></div>
                     <div><span class="text-sm text-gray-500">Estado:</span> <span class="font-semibold capitalize">{{ str_replace('_',' ',$postulante->estado) }}</span></div>
                     <div><span class="text-sm text-gray-500">Gestión:</span> {{ $postulante->gestion->nombre ?? '-' }}</div>
-                    <div><span class="text-sm text-gray-500">Grupo:</span> {{ $postulante->grupo->nombre ?? 'Sin asignar' }}</div>
+                    <div><span class="text-sm text-gray-500"></span> <strong>{{ $postulante->grupo->nombre ?? 'Sin asignar' }}</strong></div>
                     <div><span class="text-sm text-gray-500">Teléfono:</span> {{ $postulante->telefono ?? '-' }}</div>
                     <div><span class="text-sm text-gray-500">Nacimiento:</span> {{ $postulante->fecha_nacimiento->format('d/m/Y') }}</div>
                 </div>

@@ -20,14 +20,14 @@
     </div>
 
     <!-- NAVBAR -->
-    <nav class="w-full px-4 lg:px-8 py-4 lg:py-5 flex items-center justify-between border-b shadow-md" style="background-color: #0A3254; border-color: #051c2e;">
+    <nav class="w-full px-4 lg:px-8 py-3 sm:py-4 lg:py-5 flex flex-wrap items-center justify-between gap-2 border-b shadow-md" style="background-color: #0A3254; border-color: #051c2e;">
         <!-- Logo -->
-        <div class="flex items-center" style="gap: 12px;">
-            <img src="{{ asset('img/escudo.png') }}" alt="Escudo FICCT CUP" style="height: 40px; width: auto;">
+        <div class="flex items-center gap-2 sm:gap-3">
+            <img src="{{ asset('img/escudo.png') }}" alt="Escudo FICCT CUP" class="h-8 sm:h-10 w-auto">
             <div class="flex items-center">
-                <span class="text-2xl font-black tracking-wide" style="color: white;">FICCT</span>
-                <span style="color: rgba(255,255,255,0.4); margin: 0 10px; font-size: 1.5rem; font-weight: 300;">|</span>
-                <span class="text-lg font-medium tracking-wide" style="color: #cbd5e1;">UAGRM</span>
+                <span class="text-xl sm:text-2xl font-black tracking-wide" style="color: white;">FICCT</span>
+                <span class="hidden sm:inline" style="color: rgba(255,255,255,0.4); margin: 0 10px; font-size: 1.5rem; font-weight: 300;">|</span>
+                <span class="hidden sm:inline text-base sm:text-lg font-medium tracking-wide" style="color: #cbd5e1;">UAGRM</span>
             </div>
         </div>
 
@@ -35,9 +35,9 @@
         <div class="hidden lg:flex flex-1"></div>
 
         <!-- Right Side -->
-        <div class="flex items-center gap-4">
-            <button onclick="document.getElementById('modal-acceso').classList.remove('hidden')" class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white font-semibold shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg border border-transparent" style="background-color: #D52B1E; border-color: #b82519;">
-                Ingresar al Sistema
+        <div class="flex items-center">
+            <button onclick="document.getElementById('modal-acceso').classList.remove('hidden')" class="flex items-center gap-1 sm:gap-2 px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-lg text-white text-sm sm:text-base font-semibold shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg border border-transparent whitespace-nowrap" style="background-color: #D52B1E; border-color: #b82519;">
+                Ingresar <span class="hidden sm:inline">al Sistema</span>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
             </button>
         </div>
