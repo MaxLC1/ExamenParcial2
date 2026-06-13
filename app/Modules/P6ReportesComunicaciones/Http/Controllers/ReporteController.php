@@ -184,43 +184,60 @@ class ReporteController extends Controller
 
         if ($request->isMethod('post') || $request->has('generar') || $request->has('materia_id') || $request->has('estado') || $request->get('formato') === 'pdf') {
             $mostrarTabla = true;
-            $query = Postulante::whereHas('grupo', fn($q) => $q->where('gestion_id', $gestionId));
+            // Eager loading agresivo para evitar el problema N+1 (miles de consultas)
+            $query = Postulante::with([
+                'grupo.grupoMaterias.materia', 
+                'grupo.grupoMaterias.examenes.calificaciones', 
+                'carreraAsignada'
+            ])->whereHas('grupo', fn($q) => $q->where('gestion_id', $gestionId));
+            
             $postulantes = $query->get();
-            $calService = app(CalificacionService::class);
 
             foreach ($postulantes as $p) {
+                if (!$p->grupo) continue;
+                
+                $gmList = $p->grupo->grupoMaterias;
                 if ($filtroMateria) {
-                    $gm = $p->grupo->grupoMaterias()->where('materia_id', $filtroMateria)->first();
-                    if (!$gm) continue;
-                    $nota = $calService->calcularNotaTotal($p->id, $gm->id);
-                } else {
-                    $nota = 0;
-                    $totalM = 0;
-                    foreach ($p->grupo->grupoMaterias as $gm) {
-                        $nota += $calService->calcularNotaTotal($p->id, $gm->id);
-                        $totalM++;
-                    }
-                    if ($totalM > 0) $nota = $nota / $totalM; // Average
+                    $gmList = $gmList->where('materia_id', $filtroMateria);
+                    if ($gmList->isEmpty()) continue;
                 }
 
+                $nota = 0;
+                $totalM = 0;
+                // Agrupar por materia para calcular las notas en memoria sin tocar la BD
+                $materiasAgrupadas = $gmList->groupBy('materia_id');
+                
+                foreach ($materiasAgrupadas as $materiaId => $gmsMateria) {
+                    $suma = 0;
+                    foreach ($gmsMateria as $gm) {
+                        foreach ($gm->examenes as $examen) {
+                            $calificacion = $examen->calificaciones->where('postulante_id', $p->id)->first();
+                            if ($calificacion) {
+                                $suma += $calificacion->nota;
+                            }
+                        }
+                    }
+                    $nota += round($suma / 3, 2);
+                    $totalM++;
+                }
+
+                $nota = $totalM > 0 ? round($nota / $totalM, 2) : 0;
                 $estado = $nota >= 60 ? 'Aprobado' : 'Reprobado';
 
                 if ($filtroEstado && $filtroEstado !== 'todos') {
-                    if (strtolower($estado) !== strtolower($filtroEstado)) continue;
+                    if (strtolower($estado) !== strtolower($filtroEstado)) {
+                        continue;
+                    }
                 }
-
-                $asignacion = \App\Modules\P3GestionAcademica\Models\AsignacionCarrera::where('postulante_id', $p->id)
-                    ->where('estado', 'asignado')
-                    ->first();
 
                 $reporteData[] = [
                     'ci' => $p->ci,
                     'nombre' => $p->nombre_completo,
                     'telefono' => $p->telefono ?? '-',
-                    'email' => $p->email ?? '-',
-                    'nota' => round($nota, 2),
+                    'email' => $p->correo ?? '-',
+                    'nota' => $nota,
                     'estado' => $estado,
-                    'carrera_asignada' => $asignacion ? $asignacion->carrera->nombre : 'Sin Asignar',
+                    'carrera_asignada' => $p->carreraAsignada ? $p->carreraAsignada->nombre : 'Sin Asignar',
                 ];
             }
         }
