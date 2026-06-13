@@ -46,6 +46,13 @@
                     @endforeach
                 ],
                 
+                // Mapeo de gestiones
+                gestionesBD: [
+                    @foreach($gestiones as $g)
+                        { id: '{{ $g->id }}', nombre: '{{ $g->nombre }}'.toLowerCase() },
+                    @endforeach
+                ],
+                
                 startVoiceAssistant() {
                     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
                         alert('Tu navegador no soporta reconocimiento de voz. Usa Google Chrome o Microsoft Edge.');
@@ -59,7 +66,7 @@
                     recognition.maxAlternatives = 1;
                     
                     this.isListening = true;
-                    this.transcript = 'Escuchando... Di comandos como \u0022Aprobados de Física\u0022 o \u0022Reprobados de Computación\u0022';
+                    this.transcript = 'Escuchando... Di comandos como \u0022Aprobados de Física en la Gestión 2 2025\u0022';
                     
                     recognition.onresult = (event) => {
                         const speechResult = event.results[0][0].transcript.toLowerCase();
@@ -67,11 +74,26 @@
                         this.isListening = false;
                         
                         setTimeout(() => {
-                            // 1. Detección de Intenciones Avanzadas (Aprobados/Reprobados + Materia)
+                            // 1. Detección de Intenciones Avanzadas
                             let isAprobado = speechResult.includes('aprobado');
                             let isReprobado = speechResult.includes('reprobado');
                             
                             let normalizedSpeech = speechResult.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                            
+                            // Normalizar números para las gestiones (ej. "dos" -> "ii", "2" -> "ii", "1" -> "i", "uno" -> "i")
+                            let speechForGestion = normalizedSpeech
+                                .replace(/\buno\b/g, 'i').replace(/\b1\b/g, 'i')
+                                .replace(/\bdos\b/g, 'ii').replace(/\b2\b/g, 'ii');
+                                
+                            // Buscar gestión mencionada
+                            let gestionEncontrada = this.gestionesBD.find(g => {
+                                let normName = g.nombre.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace('-', ' ');
+                                return speechForGestion.includes(normName);
+                            });
+                            
+                            // Si se encuentra una gestión en la voz, usamos esa. Si no, usamos la activa por defecto.
+                            let targetGestionId = gestionEncontrada ? gestionEncontrada.id : this.gestionActivaId;
+                            
                             let materiaEncontrada = this.materiasBD.find(m => {
                                 let normName = m.nombre.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
                                 let singularName = normName.endsWith('s') && normName !== 'ingles' ? normName.slice(0, -1) : normName;
@@ -80,7 +102,7 @@
                             
                             if (materiaEncontrada || isAprobado || isReprobado) {
                                 // Construir URL con parámetros GET para generar el reporte dinámicamente
-                                let url = `/admin/reportes/personalizado?gestion_id=${this.gestionActivaId}&generar=1`;
+                                let url = `/admin/reportes/personalizado?gestion_id=${targetGestionId}&generar=1`;
                                 
                                 if (materiaEncontrada) {
                                     url += `&materia_id=${materiaEncontrada.id}`;
@@ -90,20 +112,20 @@
                                 else if (isReprobado) url += `&estado=reprobado`;
                                 else url += `&estado=todos`;
                                 
-                                this.transcript = '¡Entendido! Generando reporte dinámico...';
-                                setTimeout(() => window.location.href = url, 500);
+                                this.transcript = `¡Entendido! Generando reporte de ${gestionEncontrada ? gestionEncontrada.nombre : 'gestión actual'}...`;
+                                setTimeout(() => window.location.href = url, 800);
                                 return;
                             }
                             
                             // 2. Detección de Comandos Simples Anteriores
                             if (speechResult.includes('materia') || speechResult.includes('materias')) {
-                                window.location.href = '/admin/reportes/por-materia?gestion_id=' + this.gestionActivaId;
+                                window.location.href = '/admin/reportes/por-materia?gestion_id=' + targetGestionId;
                             } else if (speechResult.includes('profesor') || speechResult.includes('docente')) {
-                                window.location.href = '/admin/reportes/por-profesor?gestion_id=' + this.gestionActivaId;
+                                window.location.href = '/admin/reportes/por-profesor?gestion_id=' + targetGestionId;
                             } else if (speechResult.includes('carrera') || speechResult.includes('carreras')) {
-                                window.location.href = '/admin/reportes/por-carrera?gestion_id=' + this.gestionActivaId;
+                                window.location.href = '/admin/reportes/por-carrera?gestion_id=' + targetGestionId;
                             } else {
-                                alert('Comando no reconocido. Intenta decir: \u0022Aprobados de Matemáticas\u0022.');
+                                alert('Comando no reconocido. Intenta decir: \u0022Aprobados de Matemáticas en Gestión 2 2025\u0022.');
                             }
                         }, 1000);
                     };
