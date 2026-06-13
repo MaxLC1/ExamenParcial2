@@ -73,7 +73,7 @@
                         return ucfirst(trim($nombre));
                     }
                     return 'Grupo ' . trim($nombre);
-                });
+                })->sortKeys();
             @endphp
 
             <!-- Lista de Grupos -->
@@ -116,7 +116,7 @@
                                 // Nivel 2: Agrupar por Materia dentro del Grupo
                                 $groupedByMateria = $examenesDelGrupo->groupBy(function($item) {
                                     return $item->grupoMateria->materia->nombre;
-                                });
+                                })->sortKeys();
                             @endphp
 
                             @foreach($groupedByMateria as $materiaName => $examenesDeMateria)
